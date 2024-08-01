@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:cabme/utils/Preferences.dart';
 
 class API {
-  static const baseUrl = "https://taxi.openai-systems.com/api/v1/"; // live
-  static const apiKey = "Replace your API key";
+  static const baseUrl = "https://taxi-madina.com/api/v1/";
+  static const apiKey = "base64:9wMwQDEBjAK5OVvehRlQhF5PE1dNk6xK3RRIUkcDyGA=";
 
   static Map<String, String> authheader = {
     HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
@@ -12,7 +12,7 @@ class API {
   };
   static Map<String, String> header = {
     HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
-    // 'apikey': apiKey,
+    'apikey': apiKey,
     'accesstoken': Preferences.getString(Preferences.accesstoken)
   };
 
@@ -42,11 +42,9 @@ class API {
 
   static const getRideReview = "${baseUrl}get-ride-review";
   static const taxi = "${baseUrl}taxi";
-  static const userPendingPayment = "${baseUrl}user-pending-payment";
   static const setFavouriteRide = "${baseUrl}favorite-ride";
   static const getVehicleCategory = "${baseUrl}Vehicle-category";
   static const driverDetails = "${baseUrl}driver";
-  static const getPaymentMethod = "${baseUrl}payment-method";
   static const bookRides = "${baseUrl}requete-register";
   static const userAllRides = "${baseUrl}user-all-rides";
   static const newRide = "${baseUrl}requete-userapp";
@@ -60,10 +58,16 @@ class API {
   static const bookRide = "${baseUrl}set-Location";
   static const getRentedData = "${baseUrl}location";
   static const cancelRentedVehicle = "${baseUrl}canceled-location";
+
+  //payment
+  static const getPaymentMethod = "${baseUrl}payment-method";
+  static const userPendingPayment = "${baseUrl}user-pending-payment";
   static const paymentSetting = "${baseUrl}payment-settings";
   static const payRequestWallet = "${baseUrl}pay-requete-wallet";
   static const payRequestCash = "${baseUrl}payment-by-cash";
   static const payRequestTransaction = "${baseUrl}pay-requete";
+
+  //review
   static const addReview = "${baseUrl}note";
   static const addComplaint = "${baseUrl}complaints";
   static const getComplaint = "${baseUrl}complaintsList";

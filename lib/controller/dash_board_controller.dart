@@ -11,7 +11,6 @@ import 'package:cabme/page/contact_us/contact_us_screen.dart';
 import 'package:cabme/page/dash_board.dart';
 import 'package:cabme/page/favotite_ride_screens/favorite_ride_screen.dart';
 import 'package:cabme/page/localization_screens/localization_screen.dart';
-import 'package:cabme/page/my_profile/my_profile_screen.dart';
 import 'package:cabme/page/new_ride_screens/new_ride_screen.dart';
 import 'package:cabme/page/parcel_service_screen/all_parcel_screen.dart';
 import 'package:cabme/page/parcel_service_screen/parcel_category_screen.dart';
@@ -29,7 +28,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:launch_review/launch_review.dart';
+
 import '../page/home_screens/home_screen.dart';
+import '../page/new_ride_screens/my_profile/my_profile_screen.dart';
 
 class DashBoardController extends GetxController {
   RxInt selectedDrawerIndex = 0.obs;
@@ -52,7 +53,7 @@ class DashBoardController extends GetxController {
   updateToken() async {
     // use the returned token to send messages to users from your custom server
     String? token = await FirebaseMessaging.instance.getToken();
-
+    log("Firebase Token : $token");
     if (token != null) {
       updateFCMToken(token);
     }
@@ -63,10 +64,6 @@ class DashBoardController extends GetxController {
       DrawerItem('home'.tr, CupertinoIcons.home),
       DrawerItem('All Rides'.tr, Icons.local_car_wash),
       DrawerItem('favorite_ride'.tr, CupertinoIcons.star),
-      // DrawerItem('confirmed', CupertinoIcons.checkmark_circle),
-      // DrawerItem('on_ride', Icons.directions_boat_outlined),
-      // DrawerItem("completed", Icons.incomplete_circle),
-      // DrawerItem('canceled', Icons.cancel_outlined),
       DrawerItem('rent_a_vehicle'.tr, Icons.car_rental),
       DrawerItem('rented_vehicle'.tr, Icons.car_rental),
       if (Constant.parcelActive.toString() == "yes")
@@ -188,8 +185,8 @@ class DashBoardController extends GetxController {
     if (Constant.parcelActive.toString() == "yes") {
       if (index == 14) {
         LaunchReview.launch(
-          androidAppId: "com.cabme",
-          iOSAppId: "com.cabme.ios",
+          androidAppId: "com.madinauser.openai",
+          iOSAppId: "com.madinauser.openai.ios",
         );
       } else if (index == 15) {
         Preferences.clearKeyData(Preferences.isLogin);
@@ -202,8 +199,8 @@ class DashBoardController extends GetxController {
     } else {
       if (index == 12) {
         LaunchReview.launch(
-          androidAppId: "com.cabme",
-          iOSAppId: "com.cabme.ios",
+          androidAppId: "com.madinauser.openai",
+          iOSAppId: "com.madinauser.openai.ios",
         );
       } else if (index == 13) {
         Preferences.clearKeyData(Preferences.isLogin);

@@ -34,21 +34,28 @@ class NewRideController extends GetxController {
 
   Future<dynamic> getNewRide() async {
     try {
-      final response = await http.get(Uri.parse("${API.userAllRides}?id_user_app=${Preferences.getInt(Preferences.userId)}"), headers: API.header);
+      final response = await http.get(
+          Uri.parse(
+              "${API.userAllRides}?id_user_app=${Preferences.getInt(Preferences.userId)}"),
+          headers: API.header);
 
       Map<String, dynamic> responseBody = json.decode(response.body);
+      print(responseBody);
+      print(response.statusCode);
       if (response.statusCode == 200 && responseBody['success'] == "success") {
         isLoading.value = false;
 
         RideModel model = RideModel.fromJson(responseBody);
 
         rideList.value = model.data!;
-      } else if (response.statusCode == 200 && responseBody['success'] == "Failed") {
+      } else if (response.statusCode == 200 &&
+          responseBody['success'] == "Failed") {
         rideList.clear();
         isLoading.value = false;
       } else {
         isLoading.value = false;
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {

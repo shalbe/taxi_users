@@ -2559,7 +2559,7 @@ class ParcelPaymentSelectionScreen extends StatelessWidget {
     //initiate payPal plugin
     await _flutterPaypalNativePlugin.init(
       //your app id !!! No Underscore!!! see readme.md for help
-      returnUrl: "com.cabme://paypalpay",
+      returnUrl: "com.madinauser.openai://paypalpay",
       //client id from developer dashboard
       clientID: walletController.paymentSettingModel.value.payPal!.appId!,
       //sandbox, staging, live etc

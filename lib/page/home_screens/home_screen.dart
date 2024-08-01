@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cabme/constant/constant.dart';
 import 'package:cabme/constant/show_toast_dialog.dart';
 import 'package:cabme/controller/home_controller.dart';
@@ -18,6 +20,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   getCurrentLocation(bool isDepartureSet) async {
     if (isDepartureSet) {
+      log("get departure location");
       LocationData location = await currentLocation.getLocation();
       List<get_cord_address.Placemark> placeMarks =
           await get_cord_address.placemarkFromCoordinates(
@@ -79,6 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
               : "${placeMarks.first.postalCode}, ");
       controller.departureController.text = address;
       setState(() {
+        print(location.latitude);
+        print(location.longitude);
+
         setDepartureMarker(
             LatLng(location.latitude ?? 0.0, location.longitude ?? 0.0));
       });
@@ -154,750 +161,335 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (controller) {
                       //list of categories
                       return ListView.separated(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              onTap: () {
-                                ShowToastDialog.showLoader('Please wait'.tr);
-                                // this will fetch data of request To/From "sub categories"
-                                controller.getSubCategoriesListTo(index + 1);
-                                controller.getSubCategoriesListFrom(index + 1);
-                                showBarModalBottomSheet(
-                                    backgroundColor: Colors.white,
-                                    context: context,
-                                    builder: (context) {
-                                      ShowToastDialog.closeLoader();
-                                      return PageView(
-                                        controller: controller
-                                            .rideLocationsPageController,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        children: [
-                                          //source location list view
-                                          GetBuilder<HomeController>(
-                                            init: controller,
-                                            builder: (controller) => Column(
-                                              children: [
-                                                const Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "Select your location",
-                                                    style: TextStyle(
-                                                      fontSize: 25,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                    ),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            onTap: () {
+                              // this will fetch data of request To/From "sub categories"
+                              controller.selectedCategory =
+                                  controller.categories[index];
+                              controller.paymentType =
+                                  controller.selectedCategory.paymentType!;
+                              print(
+                                  "selected Category ${controller.selectedCategory.name} payment type ${controller.paymentType}");
+
+                              controller.getSubCategoriesListTo();
+                              controller.getSubCategoriesListFrom();
+                              showBarModalBottomSheet(
+                                  backgroundColor: Colors.white,
+                                  context: context,
+                                  builder: (context) {
+                                    return PageView(
+                                      controller: controller
+                                          .rideLocationsPageController,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      children: [
+                                        //source location list view
+                                        GetBuilder<HomeController>(
+                                          init: controller,
+                                          builder: (controller) => Column(
+                                            children: [
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 16.0),
+                                                child: Text(
+                                                  "Select your location",
+                                                  style: TextStyle(
+                                                    fontSize: 25,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  height: height * 0.7,
-                                                  child: Scrollbar(
+                                              ),
+                                              SizedBox(
+                                                height: height * 0.7,
+                                                child: Scrollbar(
+                                                  controller: controller
+                                                      .locationScrollController,
+                                                  thickness: 5,
+                                                  thumbVisibility: true,
+                                                  trackVisibility: true,
+                                                  child: ListView.builder(
                                                     controller: controller
                                                         .locationScrollController,
-                                                    thickness: 5,
-                                                    thumbVisibility: true,
-                                                    trackVisibility: true,
-                                                    child: ListView.builder(
-                                                      controller: controller
-                                                          .locationScrollController,
-                                                      itemCount: controller
-                                                          .subCategoriesRequestFrom
-                                                          .length,
-                                                      itemBuilder:
-                                                          (BuildContext context,
-                                                              int index) {
-                                                        SubCategoryModel
-                                                            subCategory =
+                                                    itemCount: controller
+                                                        .subCategoriesRequestFrom
+                                                        .length,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      SubCategoryModel
+                                                          subCategory =
+                                                          controller
+                                                                  .subCategoriesRequestFrom[
+                                                              index];
+                                                      return ListTile(
+                                                        selected: index ==
                                                             controller
-                                                                    .subCategoriesRequestFrom[
-                                                                index];
-                                                        return ListTile(
-                                                          selected: index ==
-                                                              controller
-                                                                  .selectedUserLocationTileIndex,
-                                                          onTap: () {
-                                                            controller
-                                                                .selectUserLocationTile(
-                                                                    index);
-                                                          },
-                                                          selectedTileColor:
-                                                              Colors.grey
-                                                                  .withOpacity(
-                                                                      0.5),
-                                                          title: Text(
-                                                            subCategory.name ??
-                                                                "",
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
+                                                                .selectedUserLocationTileIndex,
+                                                        onTap: () {
+                                                          controller
+                                                              .selectUserLocationTile(
+                                                                  index);
+                                                        },
+                                                        selectedTileColor:
+                                                            Colors.grey
+                                                                .withOpacity(
+                                                                    0.5),
+                                                        title: Text(
+                                                          subCategory.name ??
+                                                              "",
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                           ),
-                                                        );
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: controller
+                                                        .selectedUserLocationTileIndex !=
+                                                    -1,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 20),
+                                                    child:
+                                                        ButtonThem.buildButton(
+                                                      context,
+                                                      title: 'next'.tr,
+                                                      btnHeight: 45,
+                                                      btnWidthRatio: 0.8,
+                                                      btnColor: ConstantColors
+                                                          .primary,
+                                                      txtColor: Colors.white,
+                                                      onPress: () async {
+                                                        controller
+                                                            .rideLocationsPageController
+                                                            .nextPage(
+                                                                duration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                            500),
+                                                                curve: Curves
+                                                                    .easeIn);
                                                       },
                                                     ),
                                                   ),
                                                 ),
-                                                Visibility(
-                                                  visible: controller
-                                                          .selectedUserLocationTileIndex !=
-                                                      -1,
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 20),
-                                                      child: ButtonThem
-                                                          .buildButton(
-                                                        context,
-                                                        title: 'next'.tr,
-                                                        btnHeight: 45,
-                                                        btnWidthRatio: 0.8,
-                                                        btnColor: ConstantColors
-                                                            .primary,
-                                                        txtColor: Colors.white,
-                                                        onPress: () async {
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // destination location list view
+                                        GetBuilder<HomeController>(
+                                          init: controller,
+                                          builder: (controller) => Column(
+                                            children: [
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 16.0),
+                                                child: Text(
+                                                  "Select your Destination",
+                                                  style: TextStyle(
+                                                    fontSize: 25,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: height * 0.6,
+                                                child: Scrollbar(
+                                                  controller: controller
+                                                      .destinationScrollController,
+                                                  thickness: 5,
+                                                  thumbVisibility: true,
+                                                  trackVisibility: true,
+                                                  child: ListView.builder(
+                                                    controller: controller
+                                                        .destinationScrollController,
+                                                    itemCount: controller
+                                                        .subCategoriesRequestTo
+                                                        .length,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      SubCategoryModel
+                                                          subCategoryModel =
                                                           controller
-                                                              .rideLocationsPageController
-                                                              .nextPage(
-                                                                  duration: const Duration(
-                                                                      milliseconds:
-                                                                          500),
-                                                                  curve: Curves
-                                                                      .easeIn);
+                                                                  .subCategoriesRequestTo[
+                                                              index];
+
+                                                      return ListTile(
+                                                        selected: index ==
+                                                            controller
+                                                                .selectedUserDestinationTileIndex,
+                                                        onTap: () {
+                                                          controller
+                                                              .selectUserDestinationTile(
+                                                                  index);
+                                                          controller
+                                                              .getCurrentPrice();
+                                                        },
+                                                        selectedTileColor:
+                                                            Colors.grey
+                                                                .withOpacity(
+                                                                    0.5),
+                                                        title: Text(
+                                                          subCategoryModel
+                                                                  .name ??
+                                                              "",
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        trailing: GetX(
+                                                          init: controller,
+                                                          builder:
+                                                              (controller) {
+                                                            return Text(
+                                                              controller
+                                                                      .twoWayCondition
+                                                                      .value
+                                                                  ? subCategoryModel
+                                                                          .price2 ??
+                                                                      0
+                                                                          .toDouble()
+                                                                          .toInt()
+                                                                          .toString()
+                                                                  : subCategoryModel
+                                                                          .price ??
+                                                                      0
+                                                                          .toDouble()
+                                                                          .toInt()
+                                                                          .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                color:
+                                                                    Colors.blue,
+                                                                fontSize: 20,
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 30),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Row(
+                                                      children: [
+                                                        Icon(
+                                                            Icons
+                                                                .transfer_within_a_station_sharp,
+                                                            size: 25),
+                                                        Text(
+                                                          "Two Way",
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    GetX<HomeController>(
+                                                      builder: (controller) =>
+                                                          Switch(
+                                                        inactiveThumbColor:
+                                                            Colors.grey,
+                                                        activeTrackColor:
+                                                            Colors.blue,
+                                                        value: controller
+                                                            .twoWayCondition
+                                                            .value,
+                                                        onChanged: (value) {
+                                                          controller
+                                                              .twoWayCondition
+                                                              .value = value;
                                                         },
                                                       ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              Visibility(
+                                                visible: controller
+                                                    .confirmWidgetVisible.value,
+                                                child: confirmWidget(),
+                                              ),
+                                            ],
                                           ),
-                                          // destination location list view
-                                          GetBuilder<HomeController>(
-                                            init: controller,
-                                            builder: (controller) => Column(
-                                              children: [
-                                                const Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                                  child: Text(
-                                                    "Select your Destination",
-                                                    style: TextStyle(
-                                                      fontSize: 25,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: height * 0.6,
-                                                  child: Scrollbar(
-                                                    controller: controller
-                                                        .destinationScrollController,
-                                                    thickness: 5,
-                                                    thumbVisibility: true,
-                                                    trackVisibility: true,
-                                                    child: ListView.builder(
-                                                      controller: controller
-                                                          .destinationScrollController,
-                                                      itemCount: controller
-                                                          .subCategoriesRequestTo
-                                                          .length,
-                                                      itemBuilder:
-                                                          (BuildContext context,
-                                                              int index) {
-                                                        SubCategoryModel
-                                                            subCategoryModel =
-                                                            controller
-                                                                    .subCategoriesRequestTo[
-                                                                index];
-                                                        return ListTile(
-                                                          selected: index ==
-                                                              controller
-                                                                  .selectedUserDestinationTileIndex,
-                                                          onTap: () {
-                                                            controller
-                                                                .selectUserDestinationTile(
-                                                                    index);
-                                                          },
-                                                          selectedTileColor:
-                                                              Colors.grey
-                                                                  .withOpacity(
-                                                                      0.5),
-                                                          title: Text(
-                                                            subCategoryModel
-                                                                    .name ??
-                                                                "",
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                          trailing: GetX(
-                                                            init: controller,
-                                                            builder:
-                                                                (controller) {
-                                                              return Text(
-                                                                controller
-                                                                        .twoWayCondition
-                                                                        .value
-                                                                    ? subCategoryModel
-                                                                            .price2 ??
-                                                                        0
-                                                                            .toDouble()
-                                                                            .toInt()
-                                                                            .toString()
-                                                                    : subCategoryModel
-                                                                            .price ??
-                                                                        0
-                                                                            .toDouble()
-                                                                            .toInt()
-                                                                            .toString(),
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .blue,
-                                                                  fontSize: 20,
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 30),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      const Row(
-                                                        children: [
-                                                          Icon(
-                                                              Icons
-                                                                  .transfer_within_a_station_sharp,
-                                                              size: 25),
-                                                          Text(
-                                                            "Two Way",
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: 18,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      GetX<HomeController>(
-                                                        builder: (controller) =>
-                                                            Switch(
-                                                          inactiveThumbColor:
-                                                              Colors.grey,
-                                                          activeTrackColor:
-                                                              Colors.blue,
-                                                          value: controller
-                                                              .twoWayCondition
-                                                              .value,
-                                                          onChanged: (value) {
-                                                            controller
-                                                                .twoWayCondition
-                                                                .value = value;
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Visibility(
-                                                  visible: controller
-                                                          .selectedUserLocationTileIndex !=
-                                                      -1,
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 20),
-                                                      child: ButtonThem
-                                                          .buildButton(
-                                                        context,
-                                                        title: 'confirm'.tr,
-                                                        btnHeight: 45,
-                                                        btnWidthRatio: 0.8,
-                                                        btnColor: ConstantColors
-                                                            .primary,
-                                                        txtColor: Colors.white,
-                                                        onPress: () async {},
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      );
-                                    }).whenComplete(
-                                  () {
-                                    controller.disposeTwoWaySelection();
-                                    controller
-                                        .disposeUserDestinationSelection();
-                                    controller.disposeUserLocationSelection();
-                                  },
-                                );
-                              },
-                              leading: const Icon(Icons.location_city),
-                              title: Text(
-                                controller.categories[index].name ?? "",
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                              trailing: const Icon(
-                                  Icons.arrow_forward_ios_rounded,
-                                  size: 20),
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return Divider(
-                              indent: 15,
-                              endIndent: 15,
-                              color: Colors.grey.withOpacity(0.5),
-                            );
-                          },
-                          itemCount: controller.categories.length);
+                                        )
+                                      ],
+                                    );
+                                  }).whenComplete(
+                                () {
+                                  controller.disposeSelections();
+                                },
+                              );
+                            },
+                            // leading:,
+                            title: Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: SizedBox(
+                                    width: 40,
+                                    child: CachedNetworkImage(
+                                        imageUrl:
+                                            "https://taxi-madina.com/assets/${controller.categories[index].image}"),
+                                  ),
+                                ),
+                                Text(
+                                  controller.categories[index].name ?? "",
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              ],
+                            ),
+                            trailing: const Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 20),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider(
+                            indent: 15,
+                            endIndent: 15,
+                            color: Colors.grey.withOpacity(0.5),
+                          );
+                        },
+                        itemCount: controller.categories.length,
+                      );
                     },
                   ),
                 ),
               ),
-              // Padding(
-              //   padding:
-              //       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              //   child:
-              //    Container(
-
-              //     decoration: BoxDecoration(
-              //         borderRadius: BorderRadius.circular(10),
-              //         color: Colors.white),
-              //     child: Padding(
-              //       padding: const EdgeInsets.symmetric(
-              //           vertical: 8.0, horizontal: 10),
-              //       child: Column(
-              //         children: [
-              //           Builder(builder: (context) {
-              //             return Padding(
-              //               padding: const EdgeInsets.symmetric(horizontal: 00),
-              //               child: Row(
-              //                 children: [
-              //                   Image.asset(
-              //                     "assets/icons/location.png",
-              //                     height: 25,
-              //                     width: 25,
-              //                   ),
-              //                   Expanded(
-              //                     child: InkWell(
-              //                       onTap: () async {
-              //                         await controller
-              //                             .placeSelectAPI(context)
-              //                             .then((value) {
-              //                           if (value != null) {
-              //                             controller.departureController.text =
-              //                                 value.result.formattedAddress
-              //                                     .toString();
-              //                             setDepartureMarker(LatLng(
-              //                                 value.result.geometry!.location
-              //                                     .lat,
-              //                                 value.result.geometry!.location
-              //                                     .lng));
-              //                           }
-              //                         });
-              //                       },
-              //                       child: buildTextField(
-              //                         title: "Departure".tr,
-              //                         textController:
-              //                             controller.departureController,
-              //                       ),
-              //                     ),
-              //                   ),
-              //                   IconButton(
-              //                     onPressed: () {
-              //                       getCurrentLocation(true);
-              //                     },
-              //                     autofocus: false,
-              //                     icon: const Icon(
-              //                       Icons.my_location_outlined,
-              //                       size: 18,
-              //                     ),
-              //                   ),
-              //                 ],
-              //               ),
-              //             );
-              //           }),
-              //           ReorderableListView(
-              //             shrinkWrap: true,
-              //             physics: const NeverScrollableScrollPhysics(),
-              //             children: <Widget>[
-              //               for (int index = 0;
-              //                   index < controller.multiStopListNew.length;
-              //                   index += 1)
-              //                 Container(
-              //                   key: ValueKey(
-              //                       controller.multiStopListNew[index]),
-              //                   child: Column(
-              //                     children: [
-              //                       const Divider(),
-              //                       InkWell(
-              //                           onTap: () async {
-              //                             await controller
-              //                                 .placeSelectAPI(context)
-              //                                 .then((value) {
-              //                               if (value != null) {
-              //                                 controller.multiStopListNew[index]
-              //                                         .editingController.text =
-              //                                     value.result.formattedAddress
-              //                                         .toString();
-              //                                 controller.multiStopListNew[index]
-              //                                         .latitude =
-              //                                     value.result.geometry!
-              //                                         .location.lat
-              //                                         .toString();
-              //                                 controller.multiStopListNew[index]
-              //                                         .longitude =
-              //                                     value.result.geometry!
-              //                                         .location.lng
-              //                                         .toString();
-              //                                 setStopMarker(
-              //                                     LatLng(
-              //                                         value.result.geometry!
-              //                                             .location.lat,
-              //                                         value.result.geometry!
-              //                                             .location.lng),
-              //                                     index);
-              //                               }
-              //                             });
-              //                           },
-              //                           child: Row(
-              //                               crossAxisAlignment:
-              //                                   CrossAxisAlignment.center,
-              //                               children: [
-              //                                 Text(
-              //                                   String.fromCharCode(index + 65),
-              //                                   style: TextStyle(
-              //                                       fontSize: 16,
-              //                                       color: ConstantColors
-              //                                           .hintTextColor),
-              //                                 ),
-              //                                 const SizedBox(
-              //                                   width: 5,
-              //                                 ),
-              //                                 Expanded(
-              //                                   child: buildTextField(
-              //                                     title:
-              //                                         "Where do you want to stop ?"
-              //                                             .tr,
-              //                                     textController: controller
-              //                                         .multiStopListNew[index]
-              //                                         .editingController,
-              //                                   ),
-              //                                 ),
-              //                                 const SizedBox(
-              //                                   width: 5,
-              //                                 ),
-              //                                 InkWell(
-              //                                   onTap: () {
-              //                                     controller.removeStops(index);
-              //                                     controller.markers
-              //                                         .remove("Stop $index");
-              //                                     getDirections();
-              //                                   },
-              //                                   child: Icon(
-              //                                     Icons.close,
-              //                                     size: 25,
-              //                                     color: ConstantColors
-              //                                         .hintTextColor,
-              //                                   ),
-              //                                 )
-              //                               ])),
-              //                     ],
-              //                   ),
-              //                 ),
-              //             ],
-              //             onReorder: (int oldIndex, int newIndex) {
-              //               setState(() {
-              //                 if (oldIndex < newIndex) {
-              //                   newIndex -= 1;
-              //                 }
-              //                 final AddStopModel item = controller
-              //                     .multiStopListNew
-              //                     .removeAt(oldIndex);
-              //                 controller.multiStopListNew
-              //                     .insert(newIndex, item);
-              //               });
-              //             },
-              //           ),
-
-              //           const Divider(),
-              //           Row(
-              //             children: [
-              //               Image.asset(
-              //                 "assets/icons/dropoff.png",
-              //                 height: 25,
-              //                 width: 25,
-              //               ),
-              //               Expanded(
-              //                 child: InkWell(
-              //                   onTap: () async {
-              //                     await controller
-              //                         .placeSelectAPI(context)
-              //                         .then((value) {
-              //                       if (value != null) {
-              //                         controller.destinationController.text =
-              //                             value.result.formattedAddress
-              //                                 .toString();
-              //                         setDestinationMarker(LatLng(
-              //                             value.result.geometry!.location.lat,
-              //                             value.result.geometry!.location.lng));
-              //                       }
-              //                     });
-              //                   },
-              //                   child: buildTextField(
-              //                     title: "Where do you want to go ?".tr,
-              //                     textController:
-              //                         controller.destinationController,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //           // ListView.builder(
-              //           //     shrinkWrap: true,
-              //           //     itemCount: controller.multiStopList.length,
-              //           //     itemBuilder: (context, int index) {
-              //           //       return Draggable(
-              //           //         onDragEnd: (DraggableDetails details) {
-              //           //           print(
-              //           //               '\x1b[92m ====== ${details.velocity.pixelsPerSecond}');
-              //           //           print('\x1b[92m ====== ${details.offset}');
-              //           //         },
-              //           //         feedback: Material(
-              //           //           child: ConstrainedBox(
-              //           //             constraints: BoxConstraints(
-              //           //                 maxWidth:
-              //           //                     MediaQuery.of(context).size.width),
-              //           //             child: Column(
-              //           //               children: [
-              //           //                 const Divider(),
-              //           //                 InkWell(
-              //           //                   onTap: () async {
-              //           //                     await controller
-              //           //                         .placeSelectAPI(context)
-              //           //                         .then((value) {
-              //           //                       if (value != null) {
-              //           //                         controller
-              //           //                                 .multiStopList[index]
-              //           //                                 .editingController
-              //           //                                 .text =
-              //           //                             value
-              //           //                                 .result.formattedAddress
-              //           //                                 .toString();
-              //           //                         controller.multiStopList[index]
-              //           //                                 .latitude =
-              //           //                             value.result.geometry!
-              //           //                                 .location.lat
-              //           //                                 .toString();
-              //           //                         controller.multiStopList[index]
-              //           //                                 .longitude =
-              //           //                             value.result.geometry!
-              //           //                                 .location.lng
-              //           //                                 .toString();
-              //           //                         setStopMarker(
-              //           //                             LatLng(
-              //           //                                 value.result.geometry!
-              //           //                                     .location.lat,
-              //           //                                 value.result.geometry!
-              //           //                                     .location.lng),
-              //           //                             index);
-              //           //                       }
-              //           //                     });
-              //           //                   },
-              //           //                   child: Row(
-              //           //                     crossAxisAlignment:
-              //           //                         CrossAxisAlignment.center,
-              //           //                     children: [
-              //           //                       Icon(
-              //           //                         Icons.location_on_outlined,
-              //           //                         size: 25,
-              //           //                         color: ConstantColors
-              //           //                             .hintTextColor,
-              //           //                       ),
-              //           //                       SizedBox(
-              //           //                         width: 5,
-              //           //                       ),
-              //           //                       Expanded(
-              //           //                         child: buildTextField(
-              //           //                           title:
-              //           //                               "Where do you want to stop ?",
-              //           //                           textController: controller
-              //           //                               .multiStopList[index]
-              //           //                               .editingController,
-              //           //                         ),
-              //           //                       ),
-              //           //                       SizedBox(
-              //           //                         width: 5,
-              //           //                       ),
-              //           //                       InkWell(
-              //           //                         onTap: () {
-              //           //                           controller.removeStops(index);
-              //           //                           _markers
-              //           //                               .remove("Stop $index");
-              //           //                           getDirections();
-              //           //                         },
-              //           //                         child: Icon(
-              //           //                           Icons.close,
-              //           //                           size: 25,
-              //           //                           color: ConstantColors
-              //           //                               .hintTextColor,
-              //           //                         ),
-              //           //                       ),
-              //           //                     ],
-              //           //                   ),
-              //           //                 ),
-              //           //               ],
-              //           //             ),
-              //           //           ),
-              //           //         ),
-              //           // child: Column(
-              //           //   children: [
-              //           //     const Divider(),
-              //           //     InkWell(
-              //           //       onTap: () async {
-              //           //         await controller
-              //           //             .placeSelectAPI(context)
-              //           //             .then((value) {
-              //           //           if (value != null) {
-              //           //             controller.multiStopList[index]
-              //           //                     .editingController.text =
-              //           //                 value.result.formattedAddress
-              //           //                     .toString();
-              //           //             controller.multiStopList[index]
-              //           //                     .latitude =
-              //           //                 value.result.geometry!.location
-              //           //                     .lat
-              //           //                     .toString();
-              //           //             controller.multiStopList[index]
-              //           //                     .longitude =
-              //           //                 value.result.geometry!.location
-              //           //                     .lng
-              //           //                     .toString();
-              //           //             setStopMarker(
-              //           //                 LatLng(
-              //           //                     value.result.geometry!
-              //           //                         .location.lat,
-              //           //                     value.result.geometry!
-              //           //                         .location.lng),
-              //           //                 index);
-              //           //           }
-              //           //         });
-              //           //       },
-              //           //       child: Row(
-              //           //         crossAxisAlignment:
-              //           //             CrossAxisAlignment.center,
-              //           //         children: [
-              //           //           Icon(
-              //           //             Icons.location_on_outlined,
-              //           //             size: 25,
-              //           //             color: ConstantColors.hintTextColor,
-              //           //           ),
-              //           //           SizedBox(
-              //           //             width: 5,
-              //           //           ),
-              //           //           Expanded(
-              //           //             child: buildTextField(
-              //           //               title:
-              //           //                   "Where do you want to stop ?",
-              //           //               textController: controller
-              //           //                   .multiStopList[index]
-              //           //                   .editingController,
-              //           //             ),
-              //           //           ),
-              //           //           SizedBox(
-              //           //             width: 5,
-              //           //           ),
-              //           //           InkWell(
-              //           //             onTap: () {
-              //           //               controller.removeStops(index);
-              //           //               _markers.remove("Stop $index");
-              //           //               getDirections();
-              //           //             },
-              //           //             child: Icon(
-              //           //               Icons.close,
-              //           //               size: 25,
-              //           //               color:
-              //           //                   ConstantColors.hintTextColor,
-              //           //             ),
-              //           //           ),
-              //           //         ],
-              //           //       ),
-              //           //     ),
-              //           //   ],
-              //           //         ),
-              //           //       );
-              //           //     }),
-
-              //           const Divider(),
-              //           InkWell(
-              //             onTap: () {
-              //               controller.addStops();
-              //             },
-              //             child: Row(
-              //               children: [
-              //                 Icon(
-              //                   Icons.add_circle,
-              //                   color: ConstantColors.hintTextColor,
-              //                 ),
-              //                 const SizedBox(
-              //                   width: 5,
-              //                 ),
-              //                 Text(
-              //                   'Add stop'.tr,
-              //                   style: TextStyle(
-              //                       color: ConstantColors.hintTextColor,
-              //                       fontSize: 16),
-              //                 ),
-              //               ],
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
-          ),
-          Visibility(
-            visible: controller.confirmWidgetVisible.value,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: confirmWidget(),
-            ),
           ),
         ],
       ),
@@ -914,8 +506,13 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: controller.departureIcon!,
       );
       departureLatLong = departure;
-      _controller!.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target: LatLng(departure.latitude, departure.longitude), zoom: 14)));
+      _controller!.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+              target: LatLng(departure.latitude, departure.longitude),
+              zoom: 14),
+        ),
+      );
 
       // _controller?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(departure.latitude, departure.longitude), zoom: 18)));
       if (departureLatLong != null && destinationLatLong != null) {
@@ -945,9 +542,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   setStopMarker(LatLng destination, int index) {
-    // final List<int> codeUnits = "Anand".codeUnits;
-    // final Uint8List unit8List = Uint8List.fromList(codeUnits);
-    // print('\x1b[97m ===== $unit8List =====');
     setState(() {
       controller.markers['Stop $index'] = Marker(
         markerId: MarkerId('Stop $index'),
@@ -956,7 +550,6 @@ class _HomeScreenState extends State<HomeScreen> {
         position: destination,
         icon: controller.stopIcon!,
       ); //BitmapDescriptor.fromBytes(unit8List));
-      // destinationLatLong = destination;
 
       if (departureLatLong != null && destinationLatLong != null) {
         getDirections();
@@ -1030,77 +623,81 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: ButtonThem.buildIconButton(context,
-                iconSize: 16.0,
-                icon: Icons.arrow_back_ios,
-                iconColor: Colors.black,
-                btnHeight: 40,
-                btnWidthRatio: 0.25,
-                title: "Back".tr,
-                btnColor: ConstantColors.yellow,
-                txtColor: Colors.black, onPress: () {
-              controller.confirmWidgetVisible.value = false;
-            }),
+            child: ButtonThem.buildIconButton(
+              context,
+              iconSize: 16.0,
+              icon: Icons.arrow_back_ios,
+              iconColor: Colors.black,
+              btnHeight: 40,
+              btnWidthRatio: 0.25,
+              title: "Back".tr,
+              btnColor: ConstantColors.yellow,
+              txtColor: Colors.black,
+              onPress: () {
+                controller.rideLocationsPageController.previousPage(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeIn);
+                controller.confirmWidgetVisible.value = false;
+              },
+            ),
           ),
           Expanded(
-            child: ButtonThem.buildButton(context,
-                btnHeight: 40,
-                title: "Continue".tr,
-                btnColor: ConstantColors.primary,
-                txtColor: Colors.white, onPress: () async {
-              await controller
-                  .getDurationDistance(departureLatLong!, destinationLatLong!)
-                  .then((durationValue) async {
-                if (durationValue != null) {
-                  await controller.getUserPendingPayment().then((value) async {
-                    if (value != null) {
-                      if (value['success'] == "success") {
-                        if (value['data']['amount'] != 0) {
-                          _pendingPaymentDialog(context);
-                        } else {
-                          if (Constant.distanceUnit == "KM") {
-                            controller.distance.value = durationValue['rows']
-                                    .first['elements']
-                                    .first['distance']['value'] /
-                                1000.00;
-                          } else {
-                            controller.distance.value = durationValue['rows']
-                                    .first['elements']
-                                    .first['distance']['value'] /
-                                1609.34;
-                          }
+            child: ButtonThem.buildButton(
+              context,
+              btnHeight: 40,
+              title: "Continue".tr,
+              btnColor: ConstantColors.primary,
+              txtColor: Colors.white,
+              onPress: () async {
+                // Map<String, dynamic> bodyParams = {
+                //   'user_id': Preferences.getInt(Preferences.userId).toString(),
+                //   //from
+                //   'lat1': controller
+                //       .subCategoriesRequestFrom[
+                //           controller.selectedUserLocationTileIndex]
+                //       .name
+                //       .toString(),
+                //   //to
+                //   'lng1': controller
+                //       .subCategoriesRequestTo[
+                //           controller.selectedUserDestinationTileIndex]
+                //       .name
+                //       .toString(),
+                //   'lat2': "0",
+                //   'lng2': "0",
+                //   //price
+                //   'cout': controller.currentPrice.value,
+                //   'distance': "0",
+                //   'distance_unit': Constant.distanceUnit.toString(),
+                //   'duree': controller.duration.toString(),
+                //   'id_conducteur': "1",
+                //   'id_payment': "1",
+                //   'depart_name': controller
+                //       .subCategoriesRequestFrom[
+                //           controller.selectedUserLocationTileIndex]
+                //       .name
+                //       .toString(),
+                //   'destination_name': controller
+                //       .subCategoriesRequestTo[
+                //           controller.selectedUserDestinationTileIndex]
+                //       .name
+                //       .toString(),
+                //   'stops': "1",
+                //   'place':
+                //       controller.twoWayCondition.value ? "Two Way" : "One Way",
+                //   'number_poeple': "1",
+                //   'image': '0',
+                //   'image_name': "0",
+                //   'statut_round': '1',
+                //   'trip_objective': "0",
+                //   'age_children1': "0",
+                //   'age_children2': "0",
+                //   'age_children3': "0",
+                // };
 
-                          controller.duration.value = durationValue['rows']
-                              .first['elements']
-                              .first['duration']['text'];
-                          // Get.back();
-                          controller.confirmWidgetVisible.value = false;
-                          tripOptionBottomSheet(context);
-                        }
-                      } else {
-                        if (Constant.distanceUnit == "KM") {
-                          controller.distance.value = durationValue['rows']
-                                  .first['elements']
-                                  .first['distance']['value'] /
-                              1000.00;
-                        } else {
-                          controller.distance.value = durationValue['rows']
-                                  .first['elements']
-                                  .first['distance']['value'] /
-                              1609.34;
-                        }
-                        controller.duration.value = durationValue['rows']
-                            .first['elements']
-                            .first['duration']['text'];
-                        controller.confirmWidgetVisible.value = false;
-                        // Get.back();
-                        tripOptionBottomSheet(context);
-                      }
-                    }
-                  });
-                }
-              });
-            }),
+                tripOptionBottomSheet(context);
+              },
+            ),
           ),
         ],
       ),
@@ -1252,37 +849,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     if (value != null) {
                                       if (value.success == "Success") {
                                         Get.back();
-                                        // List tripPrice = [];
-                                        // for (int i = 0;
-                                        //     i < value.vehicleData!.length;
-                                        //     i++) {
-                                        //   tripPrice.add(0.0);
-                                        // }
-                                        // if (value.vehicleData!.isNotEmpty) {
-                                        //   for (int i = 0;
-                                        //       i < value.vehicleData!.length;
-                                        //       i++) {
-                                        //     if (controller.distance.value >
-                                        //         value.vehicleData![i]
-                                        //             .minimumDeliveryChargesWithin!
-                                        //             .toDouble()) {
-                                        //       tripPrice.add((controller
-                                        //                   .distance.value *
-                                        //               value.vehicleData![i]
-                                        //                   .deliveryCharges!)
-                                        //           .toDouble()
-                                        //           .toStringAsFixed(
-                                        //               int.parse(Constant.decimal ?? "2")));
-                                        //     } else {
-                                        //       tripPrice.add(value
-                                        //           .vehicleData![i]
-                                        //           .minimumDeliveryCharges!
-                                        //           .toDouble()
-                                        //           .toStringAsFixed(
-                                        //               int.parse(Constant.decimal ?? "2")));
-                                        //     }
-                                        //   }
-                                        // }
                                         chooseVehicleBottomSheet(
                                           context,
                                           value,
@@ -1304,7 +870,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         });
   }
-  
+
   chooseVehicleBottomSheet(
     BuildContext context,
     VehicleCategoryModel vehicleCategoryModel,
@@ -1366,162 +932,151 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Expanded(
                       child: ListView.builder(
-                          itemCount: vehicleCategoryModel.data!.length,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return Obx(
-                              () => InkWell(
-                                onTap: () {
-                                  controller.vehicleData =
-                                      vehicleCategoryModel.data![index];
-                                  controller.selectedVehicle.value =
-                                      vehicleCategoryModel.data![index].id
-                                          .toString();
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 10),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: controller
-                                                    .selectedVehicle.value ==
-                                                vehicleCategoryModel
-                                                    .data![index].id
-                                                    .toString()
-                                            ? ConstantColors.primary
-                                            : Colors.black.withOpacity(0.10),
-                                        borderRadius: BorderRadius.circular(8)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          CachedNetworkImage(
-                                            imageUrl: vehicleCategoryModel
-                                                .data![index].image
-                                                .toString(),
-                                            fit: BoxFit.fill,
-                                            width: 80,
-                                            height: 50,
-                                            placeholder: (context, url) =>
-                                                Constant.loader(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Icon(Icons.error),
-                                          ),
-                                          Expanded(
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10),
-                                                    child: Text(
-                                                      vehicleCategoryModel
-                                                          .data![index].libelle
-                                                          .toString(),
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          color: controller
-                                                                      .selectedVehicle
-                                                                      .value ==
-                                                                  vehicleCategoryModel
-                                                                      .data![
-                                                                          index]
-                                                                      .id
-                                                                      .toString()
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
+                        itemCount: vehicleCategoryModel.data!.length,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return Obx(
+                            () => InkWell(
+                              onTap: () {
+                                controller.vehicleData =
+                                    vehicleCategoryModel.data![index];
+                                controller.selectedVehicle.value =
+                                    vehicleCategoryModel.data![index].id
+                                        .toString();
+                                controller.tripPrice = double.parse(controller
+                                        .vehicleData!.minimumDeliveryCharges!) +
+                                    double.parse(controller.currentPrice.value);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: controller.selectedVehicle.value ==
+                                              vehicleCategoryModel
+                                                  .data![index].id
+                                                  .toString()
+                                          ? ConstantColors.primary
+                                          : Colors.black.withOpacity(0.10),
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 10),
+                                    child: Row(
+                                      children: [
+                                        CachedNetworkImage(
+                                          imageUrl: vehicleCategoryModel
+                                              .data![index].image
+                                              .toString(),
+                                          fit: BoxFit.fill,
+                                          width: 80,
+                                          height: 50,
+                                          placeholder: (context, url) =>
+                                              Constant.loader(),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
+                                        ),
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          top: 5),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        controller
-                                                            .duration.value,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: controller
-                                                                      .selectedVehicle
-                                                                      .value ==
-                                                                  vehicleCategoryModel
-                                                                      .data![
-                                                                          index]
-                                                                      .id
-                                                                      .toString()
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                        ),
+                                                          left: 10),
+                                                  child: Text(
+                                                    vehicleCategoryModel
+                                                        .data![index].libelle
+                                                        .toString(),
+                                                    textAlign: TextAlign.start,
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: controller
+                                                                    .selectedVehicle
+                                                                    .value ==
+                                                                vehicleCategoryModel
+                                                                    .data![
+                                                                        index]
+                                                                    .id
+                                                                    .toString()
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      controller.duration.value,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        color: controller
+                                                                    .selectedVehicle
+                                                                    .value ==
+                                                                vehicleCategoryModel
+                                                                    .data![
+                                                                        index]
+                                                                    .id
+                                                                    .toString()
+                                                            ? Colors.white
+                                                            : Colors.black,
                                                       ),
-                                                      Text(
-                                                        Constant().amountShow(
-                                                            amount:
-                                                                "${controller.calculateTripPrice(
-                                                          distance: controller
-                                                              .distance.value,
+                                                    ),
+                                                    Text(
+                                                      Constant().amountShow(
+                                                        amount:
+                                                            "${controller.calculateTripPrice(
+                                                          destinationPrice: double
+                                                              .parse(controller
+                                                                  .currentPrice
+                                                                  .value),
                                                           deliveryCharges: double.parse(
                                                               vehicleCategoryModel
                                                                   .data![index]
                                                                   .deliveryCharges!),
-                                                          minimumDeliveryCharges:
-                                                              double.parse(
-                                                                  vehicleCategoryModel
-                                                                      .data![
-                                                                          index]
-                                                                      .minimumDeliveryCharges!),
-                                                          minimumDeliveryChargesWithin:
-                                                              double.parse(
-                                                                  vehicleCategoryModel
-                                                                      .data![
-                                                                          index]
-                                                                      .minimumDeliveryChargesWithin!),
-                                                        )}"),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: controller
-                                                                      .selectedVehicle
-                                                                      .value ==
-                                                                  vehicleCategoryModel
-                                                                      .data![
-                                                                          index]
-                                                                      .id
-                                                                      .toString()
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                        ),
+                                                        )}",
                                                       ),
-                                                    ],
-                                                  ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        color: controller
+                                                                    .selectedVehicle
+                                                                    .value ==
+                                                                vehicleCategoryModel
+                                                                    .data![
+                                                                        index]
+                                                                    .id
+                                                                    .toString()
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
-                            );
-                          }),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
@@ -1550,7 +1105,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 txtColor: Colors.white, onPress: () async {
                               if (controller.selectedVehicle.value.isNotEmpty) {
                                 double cout = 0.0;
-
                                 if (controller.distance.value >
                                     double.parse(controller.vehicleData!
                                         .minimumDeliveryChargesWithin!)) {
@@ -1563,41 +1117,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       .vehicleData!.minimumDeliveryCharges
                                       .toString());
                                 }
-
-                                // double cout = double.parse(controller
-                                //         .vehicleData!.prix
-                                //         .toString()) *
-                                //     controller.distance.value;
-
-                                // if (controller.vehicleData!.statutCommission ==
-                                //         "yes" &&
-                                //     controller.vehicleData!
-                                //             .statutCommissionPerc ==
-                                //         "yes") {
-                                //   double coutFixed = double.parse(controller
-                                //       .vehicleData!.commission
-                                //       .toString());
-                                //   double coutPerc = cout +
-                                //       (cout +
-                                //           double.parse(controller
-                                //               .vehicleData!.commissionPerc
-                                //               .toString()));
-                                //   cout = coutFixed + coutPerc;
-                                // } else if (controller
-                                //         .vehicleData!.statutCommission ==
-                                //     "yes") {
-                                //   cout = cout +
-                                //       double.parse(controller
-                                //           .vehicleData!.commission
-                                //           .toString());
-                                // } else {
-                                //   cout = cout +
-                                //       (cout +
-                                //           double.parse(controller
-                                //               .vehicleData!.commissionPerc
-                                //               .toString()));
-                                // }
-
                                 await controller
                                     .getDriverDetails(
                                         controller.vehicleData!.id.toString(),
@@ -1620,7 +1139,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       if (driverData.isNotEmpty) {
                                         Get.back();
                                         conformDataBottomSheet(
-                                            context, driverData[0], cout);
+                                            context,
+                                            driverData[0],
+                                            controller.tripPrice);
                                       } else {
                                         ShowToastDialog.showToast(
                                             "Driver not available".tr);
@@ -1647,7 +1168,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         });
   }
-   
+
   conformDataBottomSheet(
       BuildContext context, DriverData driverModel, double tripPrice) {
     return showModalBottomSheet(
@@ -1907,103 +1428,50 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .toString()
                                   });
                                 }
-
-                                Map<String, dynamic> bodyParams = {
-                                  'user_id':
-                                      Preferences.getInt(Preferences.userId)
-                                          .toString(),
-                                  //from
-                                  'lat1': controller
-                                      .subCategoriesRequestFrom[controller
-                                          .selectedUserLocationTileIndex]
-                                      .id
-                                      .toString(),
-                                  //from
-                                  'lng1': controller
-                                      .subCategoriesRequestTo[controller
-                                          .selectedUserDestinationTileIndex]
-                                      .id
-                                      .toString(),
-                                  'lat2':
-                                      destinationLatLong!.latitude.toString(),
-                                  'lng2':
-                                      destinationLatLong!.longitude.toString(),
-                                  //price
-                                  'cout': controller.twoWayCondition.value
-                                      ? controller
-                                          .subCategoriesRequestTo[controller
-                                              .selectedUserLocationTileIndex]
-                                          .price2
-                                      : controller
-                                          .subCategoriesRequestTo[controller
-                                              .selectedUserLocationTileIndex]
-                                          .price,
-                                  'distance': controller.distance.toString(),
-                                  'distance_unit':
-                                      Constant.distanceUnit.toString(),
-                                  'duree': controller.duration.toString(),
-                                  'id_conducteur': driverModel.id.toString(),
-                                  'id_payment':
-                                      controller.paymentMethodId.value,
-                                  'depart_name':
-                                      controller.departureController.text,
-                                  'destination_name':
-                                      controller.destinationController.text,
-                                  'stops': stopsList,
-                                  'place': controller.twoWayCondition.value
-                                      ? "Two Way"
-                                      : "One Way",
-                                  'number_poeple': passengerController.text,
-                                  'image': '',
-                                  'image_name': "",
-                                  'statut_round': 'no',
-                                  'trip_objective':
-                                      controller.tripOptionCategory.value,
-                                  'age_children1': controller
-                                      .addChildList[0].editingController.text,
-                                  'age_children2':
-                                      controller.addChildList.length == 2
-                                          ? controller.addChildList[1]
-                                              .editingController.text
-                                          : "",
-                                  'age_children3':
-                                      controller.addChildList.length == 3
-                                          ? controller.addChildList[2]
-                                              .editingController.text
-                                          : "",
-                                };
-
-                                controller.bookRide(bodyParams).then((value) {
-                                  if (value != null) {
-                                    if (value['success'] == "success") {
-                                      Get.back();
-                                      controller.departureController.clear();
-                                      controller.destinationController.clear();
-                                      polyLines = {};
-                                      departureLatLong = null;
-                                      destinationLatLong = null;
-                                      passengerController.clear();
-                                      tripPrice = 0.0;
-                                      controller.markers.clear();
-                                      controller.clearData();
-                                      getDirections();
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return CustomDialogBox(
-                                              title: "",
-                                              descriptions:
-                                                  "Your booking has been sent successfully",
-                                              onPress: () {
-                                                Get.back();
-                                              },
-                                              img: Image.asset(
-                                                  'assets/images/green_checked.png'),
-                                            );
-                                          });
+                                if (controller.paymentType == 1) {
+                                  showBarModalBottomSheet(
+                                    backgroundColor: Colors.white,
+                                    context: context,
+                                    builder: (context) => WebViewWidget(
+                                        controller:
+                                            controller.webViewcontroller),
+                                  );
+                                } else {
+                                  controller
+                                      .bookRide(controller.getBodyParams())
+                                      .then((value) {
+                                    if (value != null) {
+                                      if (value['success'] == "success") {
+                                        Get.back();
+                                        controller.departureController.clear();
+                                        controller.destinationController
+                                            .clear();
+                                        polyLines = {};
+                                        departureLatLong = null;
+                                        destinationLatLong = null;
+                                        passengerController.clear();
+                                        tripPrice = 0.0;
+                                        controller.markers.clear();
+                                        controller.clearData();
+                                        getDirections();
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return CustomDialogBox(
+                                                title: "",
+                                                descriptions:
+                                                    "Your booking has been sent successfully",
+                                                onPress: () {
+                                                  Get.back();
+                                                },
+                                                img: Image.asset(
+                                                    'assets/images/green_checked.png'),
+                                              );
+                                            });
+                                      }
                                     }
-                                  }
-                                });
+                                  });
+                                }
                               }
                             }),
                           ),
@@ -2194,25 +1662,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.blueGrey.shade50,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 4.0),
-                                        child: SizedBox(
-                                          width: 80,
-                                          height: 35,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 6.0),
-                                            child: Image.asset(
-                                              "assets/images/cash.png",
-                                            ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey.shade50,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0),
+                                      child: SizedBox(
+                                        width: 80,
+                                        height: 35,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6.0),
+                                          child: Image.asset(
+                                            "assets/images/cash.png",
                                           ),
                                         ),
-                                      )),
+                                      ),
+                                    ),
+                                  ),
                                   const SizedBox(
                                     width: 20,
                                   ),

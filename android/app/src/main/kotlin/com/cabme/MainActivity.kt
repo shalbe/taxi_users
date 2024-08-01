@@ -1,4 +1,4 @@
-package com.cabme
+package com.madinauser.openai
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

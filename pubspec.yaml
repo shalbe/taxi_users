@@ -81,7 +81,26 @@ dependencies:
   video_player: ^2.8.3
   video_thumbnail: ^0.5.3
   modal_bottom_sheet: ^3.0.0
+  webview_flutter: ^4.8.0
+  flutter_native_splash: ^2.4.1
 
+flutter_native_splash:
+  ios : true
+  color: "#ffffff"
+  image: assets/images/splash_icon_for_both.png
+  branding: assets/images/splash_icon_for_both.png
+  branding_bottom_padding: 24
+  color_dark: "#121212"
+  image_dark: assets/images/splash_icon_for_both.png
+  branding_dark: assets/images/splash_icon_for_both.png
+
+  android_12:
+    image: assets/images/splash_icon_for_both.png
+    icon_background_color: "#ffffff"
+    image_dark: assets/images/splash_icon_for_both.png
+    icon_background_color_dark: "#121212"
+
+  web: false
 dependency_overrides:
   webview_flutter: ^4.7.0
   google_maps_place_picker_mb: any

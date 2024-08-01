@@ -27,7 +27,7 @@ import 'package:video_compress/video_compress.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class Constant {
-  static String? kGoogleApiKey = "Replace with your API key";
+  static String? kGoogleApiKey = "AIzaSyAlOobzoJP_DrbIlvfbGZnOp7Az_k2BgdE";
   static String? distanceUnit = "KM";
   static String? appVersion = "0.0";
   static String? decimal = "2";

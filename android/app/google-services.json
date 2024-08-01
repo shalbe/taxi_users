@@ -1,1 +1,99 @@
-{  "Replace your file": "1" }
+{
+  "project_info": {
+    "project_number": "810269776309",
+    "firebase_url": "https://ojacap-58298-default-rtdb.firebaseio.com",
+    "project_id": "ojacap-58298",
+    "storage_bucket": "ojacap-58298.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810269776309:android:9cf685cf6e63059931a1fc",
+        "android_client_info": {
+          "package_name": "com.madinadriver.openai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810269776309-clujid48cu5v0kv2p3eu3nfn8hb1g51n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.madinadriver.openai",
+            "certificate_hash": "4f43e95acb819837b367a3fc33f15ec5fc35b80d"
+          }
+        },
+        {
+          "client_id": "810269776309-q5oohm512p90hlfioljn0v3omn5t457k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrrYKynUnrO3kfHpsQd4Fvr4t5YggV8Ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810269776309-blcm8il8mfd6lcjttr84bb41bfksnlh2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810269776309-gdsli23loit0stgtlu9otrvo8tnfb6k3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.taximad.openai.ios"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810269776309:android:95782de9f9bce75631a1fc",
+        "android_client_info": {
+          "package_name": "com.madinauser.openai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810269776309-acrcq1m4etfdrisdhb3mrd67ashmflne.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.madinauser.openai",
+            "certificate_hash": "4f43e95acb819837b367a3fc33f15ec5fc35b80d"
+          }
+        },
+        {
+          "client_id": "810269776309-q5oohm512p90hlfioljn0v3omn5t457k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrrYKynUnrO3kfHpsQd4Fvr4t5YggV8Ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810269776309-blcm8il8mfd6lcjttr84bb41bfksnlh2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810269776309-gdsli23loit0stgtlu9otrvo8tnfb6k3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.taximad.openai.ios"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

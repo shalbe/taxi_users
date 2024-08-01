@@ -50,21 +50,24 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'Place your key',
-    appId: 'Place your key',
-    messagingSenderId: 'Place your key',
-    projectId: 'Place your key',
-    storageBucket: 'Place your key',
+    apiKey: 'AIzaSyCrrYKynUnrO3kfHpsQd4Fvr4t5YggV8Ag',
+    appId: '1:810269776309:android:95782de9f9bce75631a1fc',
+    messagingSenderId: '810269776309',
+    projectId: 'ojacap-58298',
+    databaseURL: 'https://ojacap-58298-default-rtdb.firebaseio.com',
+    storageBucket: 'ojacap-58298.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'Place your key',
-    appId: 'Place your key',
-    messagingSenderId: 'Place your key',
-    projectId: 'Place your key',
-    storageBucket: 'Place your key',
-    androidClientId: 'Place your key',
-    iosClientId: 'Place your key',
-    iosBundleId: 'Place your key',
+    apiKey: 'AIzaSyCBqKW5qRK5rsxLg5DVebywELVMVFu07F0',
+    appId: '1:810269776309:ios:605c06fe892e102e31a1fc',
+    messagingSenderId: '810269776309',
+    projectId: 'ojacap-58298',
+    databaseURL: 'https://ojacap-58298-default-rtdb.firebaseio.com',
+    storageBucket: 'ojacap-58298.appspot.com',
+    androidClientId: '810269776309-38q9s1phif9026gc1hifnusp9l937nmo.apps.googleusercontent.com',
+    iosClientId: '810269776309-h7fm7dp6qbj2ldomt9hq6i44b8pccegi.apps.googleusercontent.com',
+    iosBundleId: 'com.madinauser.openai.ios',
   );
+
 }

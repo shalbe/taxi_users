@@ -17,14 +17,14 @@ class PayStackScreen extends StatefulWidget {
   final String callBackUrl;
 
   const PayStackScreen({
-    Key? key,
+    super.key,
     required this.initialURl,
     required this.reference,
     required this.amount,
     required this.secretKey,
     required this.walletController,
     required this.callBackUrl,
-  }) : super(key: key);
+  });
 
   @override
   State<PayStackScreen> createState() => _PayStackScreenState();

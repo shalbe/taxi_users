@@ -22,6 +22,7 @@ import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:http/http.dart' as http;
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../model/categories_model.dart';
 import '../model/payment_setting_model.dart';
@@ -44,8 +45,6 @@ class HomeController extends GetxController {
   RxString selectedVehicle = "".obs;
   late VehicleData? vehicleData;
   late PaymentMethodData? paymentMethodData;
-
-  RxBool confirmWidgetVisible = false.obs;
 
   RxString tripOptionCategory = "General".obs;
   RxString paymentMethodType = "Select Method".obs;
@@ -72,24 +71,89 @@ class HomeController extends GetxController {
   int selectedUserDestinationTileIndex = (-1);
 
   List<CategoryModel> categories = [];
+  late CategoryModel selectedCategory;
   PageController rideLocationsPageController = PageController();
   ScrollController locationScrollController = ScrollController();
   ScrollController destinationScrollController = ScrollController();
   List<SubCategoryModel> subCategoriesRequestTo = [];
   List<SubCategoryModel> subCategoriesRequestFrom = [];
   RxBool twoWayCondition = false.obs;
-
+  RxString currentPrice = "".obs;
+  RxBool confirmWidgetVisible = false.obs;
+  double tripPrice = 0.0;
+  bool subCategoriesIsLoading = false;
+  WebViewController webViewcontroller = WebViewController()
+    ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    ..setBackgroundColor(const Color(0x00000000))
+    ..setNavigationDelegate(
+      NavigationDelegate(
+        onProgress: (int progress) {
+          // Update loading bar.
+        },
+        onPageStarted: (String url) {},
+        onPageFinished: (String url) {},
+        onHttpError: (HttpResponseError error) {},
+        onWebResourceError: (WebResourceError error) {},
+        onNavigationRequest: (NavigationRequest request) {
+          if (request.url.startsWith('https://www.youtube.com/')) {
+            return NavigationDecision.prevent;
+          }
+          return NavigationDecision.navigate;
+        },
+      ),
+    )
+    ..loadRequest(Uri.parse('https://flutter.dev'));
+  int paymentType = 0; //for door to door and 1 for city to city;
   @override
   void onInit() async {
     paymentSettingModel.value = Constant.getPaymentSetting();
     getCategories();
-    RideService.getSubCategory(1, RequestType.from);
     setIcons();
     getTaxiData();
     super.onInit();
   }
 
-  // functions of Dealing with Location Api
+  Map<String, dynamic> getBodyParams() {
+    return {
+      'user_id': Preferences.getInt(Preferences.userId).toString(),
+      //from
+      'lat1': subCategoriesRequestFrom[selectedUserLocationTileIndex]
+          .name
+          .toString(),
+      //to
+      'lng1': subCategoriesRequestTo[selectedUserDestinationTileIndex]
+          .name
+          .toString(),
+      'lat2': "0",
+      'lng2': "0",
+      //price
+      'cout': currentPrice.value,
+      'distance': "0",
+      'distance_unit': Constant.distanceUnit.toString(),
+      'duree': duration.toString(),
+      'id_conducteur': "1",
+      'id_payment': "1",
+      'depart_name': subCategoriesRequestFrom[selectedUserLocationTileIndex]
+          .name
+          .toString(),
+      'destination_name':
+          subCategoriesRequestTo[selectedUserDestinationTileIndex]
+              .name
+              .toString(),
+      'stops': "1",
+      'place': twoWayCondition.value ? "Two Way" : "One Way",
+      'number_poeple': "1",
+      'image': '0',
+      'image_name': "0",
+      'statut_round': '1',
+      'trip_objective': "0",
+      'age_children1': "0",
+      'age_children2': "0",
+      'age_children3': "0",
+    };
+  }
+
+// functions of Dealing with Location Api
   void getCategories() async {
     categories = await RideService.getCategories();
     update();
@@ -102,6 +166,7 @@ class HomeController extends GetxController {
 
   void selectUserDestinationTile(int index) {
     selectedUserDestinationTileIndex = index;
+    confirmWidgetVisible.value = true;
     update();
   }
 
@@ -119,15 +184,43 @@ class HomeController extends GetxController {
     update();
   }
 
-  void getSubCategoriesListTo(int categoryId) async {
-    subCategoriesRequestTo =
-        await RideService.getSubCategory(categoryId, RequestType.to);
+  void disposeSelections() {
+    selectedUserLocationTileIndex = -1;
+    twoWayCondition.value = false;
+    selectedUserDestinationTileIndex = -1;
+    // subCategoriesRequestTo = [];
+    // subCategoriesRequestFrom = [];
+    update();
   }
 
-  void getSubCategoriesListFrom(int categoryId) async {
-    subCategoriesRequestFrom =
-        await RideService.getSubCategory(categoryId, RequestType.from);
+  void getSubCategoriesListTo() async {
+    subCategoriesIsLoading = true;
+    update();
+    subCategoriesRequestTo =
+        await RideService.getSubCategory(selectedCategory.id!, RequestType.to);
+    subCategoriesIsLoading = false;
+    update();
   }
+
+  void getSubCategoriesListFrom() async {
+    subCategoriesIsLoading = true;
+    update();
+
+    subCategoriesRequestFrom = await RideService.getSubCategory(
+        selectedCategory.id!, RequestType.from);
+    subCategoriesIsLoading = false;
+    update();
+  }
+
+  void getCurrentPrice() {
+    SubCategoryModel subCategoryModel =
+        subCategoriesRequestTo[selectedUserDestinationTileIndex];
+    currentPrice.value = twoWayCondition.value
+        ? subCategoryModel.price2 ?? 0.toDouble().toInt().toString()
+        : subCategoryModel.price ?? 0.toDouble().toInt().toString();
+  }
+
+  void rideCreation(Map<String, String> bodyParams) {}
 
   BitmapDescriptor? departureIcon;
   BitmapDescriptor? destinationIcon;
@@ -261,10 +354,6 @@ class HomeController extends GetxController {
         decodedResponse['rows'].first['elements'].first['status'] == 'OK') {
       ShowToastDialog.closeLoader();
       return decodedResponse;
-      //   estimatedTime = decodedResponse['rows'].first['elements'].first['distance']['value'] / 1000.00;
-      //   if (selctedOrderTypeValue == "Delivery") {
-      //     setState(() => deliveryCharges = (estimatedTime! * double.parse(deliveryCost)).toString());
-      //   }
     }
     ShowToastDialog.closeLoader();
     return null;
@@ -343,8 +432,10 @@ class HomeController extends GetxController {
   Future<VehicleCategoryModel?> getVehicleCategory() async {
     try {
       ShowToastDialog.showLoader("Please wait");
-      final response = await http.get(Uri.parse(API.getVehicleCategory),
-          headers: API.header);
+      final response = await http.get(
+        Uri.parse(API.getVehicleCategory),
+        headers: API.header,
+      );
       log(response.body);
       Map<String, dynamic> responseBody = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -446,9 +537,7 @@ class HomeController extends GetxController {
       ShowToastDialog.showLoader("Please wait");
       final response = await http.post(Uri.parse(API.bookRides),
           headers: API.header, body: jsonEncode(bodyParams));
-
       Map<String, dynamic> responseBody = json.decode(response.body);
-
       if (response.statusCode == 200) {
         ShowToastDialog.closeLoader();
         return responseBody;
@@ -477,21 +566,20 @@ class HomeController extends GetxController {
     }
     return null;
   }
-  
+
   double calculateTripPrice(
-      {required double distance,
-      required double minimumDeliveryChargesWithin,
-      required double minimumDeliveryCharges,
-      required double deliveryCharges}) {
+      {required double destinationPrice, required double deliveryCharges}) {
     double cout = 0.0;
 
-    if (distance > minimumDeliveryChargesWithin) {
-      cout = (distance * deliveryCharges).toDouble();
-    } else {
-      cout = minimumDeliveryCharges;
-    }
+    cout = destinationPrice + deliveryCharges;
     return cout;
   }
+}
+
+double getSelectedVeichleTripPrice(
+    {required double destinationPrice, required double deliveryCharges}) {
+  double cout = destinationPrice + deliveryCharges;
+  return cout;
 }
 
 class AddChildModel {
