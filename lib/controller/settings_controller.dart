@@ -23,7 +23,7 @@ class SettingsController extends GetxController {
 
   Future<SettingsModel?> getSettingsData() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.get(
         Uri.parse(API.settings),
         headers: API.authheader,

@@ -250,7 +250,7 @@ class DashBoardController extends GetxController {
     try {
       final response =
           await http.get(Uri.parse(API.paymentSetting), headers: API.header);
-
+      print("access Token : ${Preferences.getString(Preferences.accesstoken)}");
       log("Payment setting data ${response.body}");
 
       Map<String, dynamic> responseBody = json.decode(response.body);

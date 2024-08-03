@@ -2852,7 +2852,7 @@ class ParcelPaymentSelectionScreen extends StatelessWidget {
     var pref = {
       "items": [
         {
-          "title": "Wallet TopUp",
+          "title": "Wallet TopUp".tr,
           "quantity": 1,
           "unit_price": double.parse(amount.toString())
         }

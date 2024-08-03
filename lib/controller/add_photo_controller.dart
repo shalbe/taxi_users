@@ -31,7 +31,7 @@ class AddPhotoController extends GetxController {
 
   Future<dynamic> uploadPhoto() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
 
       var request = http.MultipartRequest(
         'POST',
@@ -39,14 +39,18 @@ class AddPhotoController extends GetxController {
       );
       request.headers.addAll(API.header);
 
-      request.files.add(http.MultipartFile.fromBytes('image', File(image.value).readAsBytesSync(), filename: File(image.value).path.split('/').last));
-      request.fields['id_user'] = Preferences.getInt(Preferences.userId).toString();
+      request.files.add(http.MultipartFile.fromBytes(
+          'image', File(image.value).readAsBytesSync(),
+          filename: File(image.value).path.split('/').last));
+      request.fields['id_user'] =
+          Preferences.getInt(Preferences.userId).toString();
       request.fields['user_cat'] = userCat;
 
       var res = await request.send();
 
       var responseData = await res.stream.toBytes();
-      Map<String, dynamic> response = jsonDecode(String.fromCharCodes(responseData));
+      Map<String, dynamic> response =
+          jsonDecode(String.fromCharCodes(responseData));
 
       if (res.statusCode == 200) {
         ShowToastDialog.closeLoader();
@@ -54,7 +58,8 @@ class AddPhotoController extends GetxController {
         return response;
       } else {
         ShowToastDialog.closeLoader();
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {
@@ -74,7 +79,7 @@ class AddPhotoController extends GetxController {
 
   Future<dynamic> uploadNicPhoto() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
 
       var request = http.MultipartRequest(
         'POST',
@@ -82,20 +87,25 @@ class AddPhotoController extends GetxController {
       );
       request.headers.addAll(API.header);
 
-      request.files.add(http.MultipartFile.fromBytes('image', File(idProofImage.value).readAsBytesSync(), filename: File(idProofImage.value).path.split('/').last));
-      request.fields['id_user'] = Preferences.getInt(Preferences.userId).toString();
+      request.files.add(http.MultipartFile.fromBytes(
+          'image', File(idProofImage.value).readAsBytesSync(),
+          filename: File(idProofImage.value).path.split('/').last));
+      request.fields['id_user'] =
+          Preferences.getInt(Preferences.userId).toString();
       request.fields['user_cat'] = userCat;
 
       var res = await request.send();
       var responseData = await res.stream.toBytes();
-      Map<String, dynamic> response = jsonDecode(String.fromCharCodes(responseData));
+      Map<String, dynamic> response =
+          jsonDecode(String.fromCharCodes(responseData));
       if (res.statusCode == 200) {
         ShowToastDialog.closeLoader();
         ShowToastDialog.showToast("Uploaded!");
         return response;
       } else {
         ShowToastDialog.closeLoader();
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {

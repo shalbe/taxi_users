@@ -7,16 +7,20 @@ import 'package:cabme/service/api.dart';
 import 'package:cabme/utils/Preferences.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+
 import '../model/language_model.dart';
 
 class LocalizationController extends GetxController {
   var languageList = <LanguageData>[].obs;
-  RxString selectedLanguage = "en".obs;
+  RxString selectedLanguage = "ru".obs;
 
   @override
   void onInit() {
-    if (Preferences.getString(Preferences.languageCodeKey).toString().isNotEmpty) {
-      selectedLanguage(Preferences.getString(Preferences.languageCodeKey).toString());
+    if (Preferences.getString(Preferences.languageCodeKey)
+        .toString()
+        .isNotEmpty) {
+      selectedLanguage(
+          Preferences.getString(Preferences.languageCodeKey).toString());
     }
     // getLanguage();
     loadData();
@@ -30,14 +34,15 @@ class LocalizationController extends GetxController {
     // languageList.value = List.from(productData).map<Data>((item) => Data.fromJson(item)).toList();
     await getLanguage().then((value) {
       if (value!.success == 'Success') {
-        languageList.addAll(value.data!.where((element) => element.status == 'true'));
+        languageList
+            .addAll(value.data!.where((element) => element.status == 'true'));
       }
     });
   }
 
   Future<LanguageModel?> getLanguage() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.get(
         Uri.parse(API.getLanguage),
         headers: API.authheader,
@@ -49,12 +54,14 @@ class LocalizationController extends GetxController {
         ShowToastDialog.closeLoader();
 
         return LanguageModel.fromJson(responseBody);
-      } else if (response.statusCode == 200 && responseBody['success'] == "Failed") {
+      } else if (response.statusCode == 200 &&
+          responseBody['success'] == "Failed") {
         ShowToastDialog.closeLoader();
         ShowToastDialog.showToast(responseBody['error']);
       } else {
         ShowToastDialog.closeLoader();
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {

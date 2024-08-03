@@ -499,7 +499,9 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
                                                     onTap: () async {
                                                       ShowToastDialog
                                                           .showLoader(
-                                                              "Please wait".tr);
+                                                              "please wait"
+                                                                  .tr
+                                                                  .tr);
                                                       final Location
                                                           currentLocation =
                                                           Location();

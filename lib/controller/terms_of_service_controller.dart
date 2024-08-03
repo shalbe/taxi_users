@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:cabme/constant/show_toast_dialog.dart';
 import 'package:cabme/service/api.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class TermsOfServiceController extends GetxController {
@@ -19,7 +19,7 @@ class TermsOfServiceController extends GetxController {
 
   Future<dynamic> getTermsOfService() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.get(
         Uri.parse(API.termsOfCondition),
         headers: API.header,
@@ -32,7 +32,8 @@ class TermsOfServiceController extends GetxController {
         return responseBody;
       } else {
         ShowToastDialog.closeLoader();
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {

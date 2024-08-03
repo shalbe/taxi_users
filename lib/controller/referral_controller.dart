@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' as devlo;
 import 'dart:io';
 
 import 'package:cabme/constant/show_toast_dialog.dart';
@@ -7,12 +8,11 @@ import 'package:cabme/service/api.dart';
 import 'package:cabme/utils/Preferences.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'dart:developer' as devlo;
 
 class ReferralController extends GetxController {
   RxBool isLoading = false.obs;
   RxString referralCode = "".obs;
-  RxString referralAmount = "".obs;
+  RxString referralAmount = "0".obs;
 
   @override
   void onInit() {
@@ -23,7 +23,10 @@ class ReferralController extends GetxController {
   Future<dynamic> getReferralAmount() async {
     try {
       isLoading.value = true;
-      final response = await http.get(Uri.parse("${API.referralAmount}?id_user=${Preferences.getInt(Preferences.userId)}"), headers: API.header);
+      final response = await http.get(
+          Uri.parse(
+              "${API.referralAmount}?id_user=${Preferences.getInt(Preferences.userId)}"),
+          headers: API.header);
       Map<String, dynamic> responseBody = json.decode(response.body);
       devlo.log(response.body);
 
@@ -31,11 +34,13 @@ class ReferralController extends GetxController {
         isLoading.value = false;
         referralAmount.value = responseBody['data']['referral_amount'];
         referralCode.value = responseBody['data']['referral_code'];
-      } else if (response.statusCode == 200 && responseBody['success'] == "Failed") {
+      } else if (response.statusCode == 200 &&
+          responseBody['success'] == "Failed") {
         isLoading.value = false;
       } else {
         isLoading.value = false;
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {

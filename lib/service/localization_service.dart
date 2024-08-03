@@ -9,6 +9,8 @@ import 'package:cabme/lang/app_zh.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../lang/app.ar.dart';
+
 class LocalizationService extends Translations {
   // Default locale
   static const locale = Locale('en', 'US');
@@ -22,6 +24,7 @@ class LocalizationService extends Translations {
     const Locale('de'),
     const Locale('pt'),
     const Locale('ru'),
+    const Locale("ar")
   ];
 
   // Keys and their translations
@@ -36,6 +39,7 @@ class LocalizationService extends Translations {
         'de': deGR,
         'pt': ptPO,
         'ru': ruRU,
+        "ar": ar
       };
 
   // Gets locale from language, and updates the locale

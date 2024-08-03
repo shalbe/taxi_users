@@ -27,8 +27,9 @@ class ContactUsController extends GetxController {
 
   Future<dynamic> contactUsSend(Map<String, String> bodyParams) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
-      final response = await http.post(Uri.parse(API.contactUs), headers: API.header, body: jsonEncode(bodyParams));
+      ShowToastDialog.showLoader("please wait".tr);
+      final response = await http.post(Uri.parse(API.contactUs),
+          headers: API.header, body: jsonEncode(bodyParams));
 
       Map<String, dynamic> responseBody = json.decode(response.body);
 
@@ -37,7 +38,8 @@ class ContactUsController extends GetxController {
         return responseBody;
       } else {
         ShowToastDialog.closeLoader();
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {

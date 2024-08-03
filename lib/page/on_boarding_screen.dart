@@ -103,10 +103,16 @@ class OnBoardingScreen extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                             shape: const StadiumBorder(),
                             backgroundColor: ConstantColors.primary),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 20.0, vertical: 12),
-                          child: Text('Get started'),
+                          child: Text(
+                            'Get started'.tr,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                       )
                     : InkWell(

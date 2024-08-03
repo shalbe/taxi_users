@@ -72,6 +72,7 @@ class Constant {
     final String user = Preferences.getString(Preferences.paymentSetting);
     if (user.isNotEmpty) {
       Map<String, dynamic> userMap = jsonDecode(user);
+
       return PaymentSettingModel.fromJson(userMap);
     }
     return PaymentSettingModel();
@@ -117,7 +118,7 @@ class Constant {
             padding: const EdgeInsets.only(top: 20),
             child: ButtonThem.buildButton(
               context,
-              title: 'Book now'.tr,
+              title: 'Book Now'.tr,
               btnHeight: 45,
               btnWidthRatio: 0.8,
               btnColor: ConstantColors.primary,

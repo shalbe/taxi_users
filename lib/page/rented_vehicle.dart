@@ -23,7 +23,7 @@ class RentedVehicleScreen extends StatelessWidget {
               child: controller.isLoading.value
                   ? Constant.loader()
                   : controller.rentedVehicleData.isEmpty
-                      ? Constant.emptyView(context, "You don't have any rented vehicle. please book ride.", false)
+                      ? Constant.emptyView(context, "You don't have any rented vehicle. please book ride.".tr, false)
                       : ListView.builder(
                           itemCount: controller.rentedVehicleData.length,
                           shrinkWrap: true,

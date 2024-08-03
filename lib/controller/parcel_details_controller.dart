@@ -24,7 +24,7 @@ class ParcelDetailsController extends GetxController {
 
   Future<dynamic> rejectParcel(Map<String, String> bodyParams) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.post(Uri.parse(API.parcelCanceled),
           headers: API.header, body: jsonEncode(bodyParams));
 
@@ -59,7 +59,7 @@ class ParcelDetailsController extends GetxController {
 
   Future<dynamic> canceledParcel(Map<String, String> bodyParams) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.post(Uri.parse(API.parcelReject),
           headers: API.header, body: jsonEncode(bodyParams));
 

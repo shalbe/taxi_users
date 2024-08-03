@@ -30,7 +30,10 @@ class CompletedRideController extends GetxController {
 
   Future<dynamic> getCompletedRide() async {
     try {
-      final response = await http.get(Uri.parse("${API.completedRide}?id_user_app=${Preferences.getInt(Preferences.userId)}"), headers: API.header);
+      final response = await http.get(
+          Uri.parse(
+              "${API.completedRide}?id_user_app=${Preferences.getInt(Preferences.userId)}"),
+          headers: API.header);
 
       Map<String, dynamic> responseBody = json.decode(response.body);
 
@@ -38,12 +41,14 @@ class CompletedRideController extends GetxController {
         isLoading.value = false;
         RideModel model = RideModel.fromJson(responseBody);
         rideList.value = model.data!;
-      } else if (response.statusCode == 200 && responseBody['success'] == "Failed") {
+      } else if (response.statusCode == 200 &&
+          responseBody['success'] == "Failed") {
         rideList.clear();
         isLoading.value = false;
       } else {
         isLoading.value = false;
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {
@@ -64,7 +69,7 @@ class CompletedRideController extends GetxController {
 
 // Future<dynamic> feelAsSafe(String id) async {
 //   try {
-//     ShowToastDialog.showLoader("Please wait");
+//     ShowToastDialog.showLoader("please wait".tr);
 //     Map<String, dynamic> bodyParams = {
 //       'user_name': userModel!.data!.nom,
 //       'user_cat': userModel!.data!.userCat,

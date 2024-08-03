@@ -443,21 +443,21 @@ class AddTripScreen extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding:  const EdgeInsets.all(8.0),
                         child: TextField(
                           controller: tripAmountTextFieldController,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.done,
-                          decoration: const InputDecoration(
-                            focusedBorder: OutlineInputBorder(
+                          decoration:  InputDecoration(
+                            focusedBorder: const OutlineInputBorder(
                               borderSide:
                                   BorderSide(color: Colors.grey, width: 1.0),
                             ),
-                            enabledBorder: OutlineInputBorder(
+                            enabledBorder: const OutlineInputBorder(
                               borderSide:
                                   BorderSide(color: Colors.grey, width: 1.0),
                             ),
-                            hintText: 'How many passenger',
+                            hintText: 'How many passenger'.tr,
                           ),
                         ),
                       ),

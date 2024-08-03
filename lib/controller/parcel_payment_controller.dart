@@ -281,7 +281,7 @@ class ParcelPaymentController extends GetxController {
   Future<dynamic> walletDebitAmountRequest(
       Map<String, dynamic> bodyParams) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
 
       final response = await http.post(Uri.parse(API.parcelPayByWallet),
           headers: API.header, body: jsonEncode(bodyParams));
@@ -317,7 +317,7 @@ class ParcelPaymentController extends GetxController {
 
   Future<dynamic> cashPaymentRequest(Map<String, dynamic> bodyParams) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.post(Uri.parse(API.parcelPayByCase),
           headers: API.header, body: jsonEncode(bodyParams));
 
@@ -370,7 +370,7 @@ class ParcelPaymentController extends GetxController {
     };
 
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.post(Uri.parse(API.parcelPaymentRequest),
           headers: API.header, body: jsonEncode(bodyParams));
 

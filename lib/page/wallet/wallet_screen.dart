@@ -17,13 +17,6 @@ import 'package:cabme/themes/constant_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_stripe/flutter_stripe.dart' as stripe1;
-import 'package:flutterwave_standard/flutterwave.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:mercadopago_sdk/mercadopago_sdk.dart';
-import 'package:paytm_allinonesdk/paytm_allinonesdk.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:flutter_paypal_native/flutter_paypal_native.dart';
 import 'package:flutter_paypal_native/models/custom/currency_code.dart';
 import 'package:flutter_paypal_native/models/custom/environment.dart';
@@ -31,6 +24,14 @@ import 'package:flutter_paypal_native/models/custom/order_callback.dart';
 import 'package:flutter_paypal_native/models/custom/purchase_unit.dart';
 import 'package:flutter_paypal_native/models/custom/user_action.dart';
 import 'package:flutter_paypal_native/str_helper.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe1;
+import 'package:flutterwave_standard/flutterwave.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:mercadopago_sdk/mercadopago_sdk.dart';
+import 'package:paytm_allinonesdk/paytm_allinonesdk.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+
 import '../../model/payment_setting_model.dart';
 import '../../utils/Preferences.dart';
 import 'MercadoPagoScreen.dart';
@@ -101,8 +102,8 @@ class WalletScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Total Balance",
+                              Text(
+                                "Total Balance".tr,
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
@@ -140,7 +141,7 @@ class WalletScreen extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 18.0, vertical: 10),
                                 child: Text(
-                                  "TOPUP WALLET",
+                                  "TOPUP WALLET".tr,
                                   style: TextStyle(
                                       color: ConstantColors.primary,
                                       fontWeight: FontWeight.w700,
@@ -217,8 +218,8 @@ class WalletScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 5),
                         child: Text(
                           data.deductionType.toString() == "1"
-                              ? "Wallet Topup"
-                              : "Payment for Trip",
+                              ? "Wallet Topup".tr
+                              : "Payment for Trip".tr,
                           style: const TextStyle(
                               fontWeight: FontWeight.w500, color: Colors.grey),
                         ),
@@ -1444,7 +1445,7 @@ class WalletScreen extends StatelessWidget {
                                   } else {
                                     Get.back();
                                     ShowToastDialog.showToast(
-                                        "Please select payment method");
+                                        "Please select payment method".tr);
                                   }
                                 }
                               },

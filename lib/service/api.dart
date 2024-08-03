@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cabme/utils/Preferences.dart';
 
 class API {
-  static const baseUrl = "https://taxi-madina.com/api/v1/";
+  static const baseUrl = "https://admin.taxi-madina.com/api/v1/";
   static const apiKey = "base64:9wMwQDEBjAK5OVvehRlQhF5PE1dNk6xK3RRIUkcDyGA=";
 
   static Map<String, String> authheader = {
@@ -58,7 +58,7 @@ class API {
   static const bookRide = "${baseUrl}set-Location";
   static const getRentedData = "${baseUrl}location";
   static const cancelRentedVehicle = "${baseUrl}canceled-location";
-
+  static const getFatoora = "${baseUrl}myfatoorah";
   //payment
   static const getPaymentMethod = "${baseUrl}payment-method";
   static const userPendingPayment = "${baseUrl}user-pending-payment";

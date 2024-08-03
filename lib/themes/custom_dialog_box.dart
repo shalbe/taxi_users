@@ -7,10 +7,16 @@ import 'package:get/get.dart';
 
 class CustomDialogBox extends StatefulWidget {
   final String title, descriptions;
-  final Image img;
+  final Image? img;
   final Function() onPress;
 
-  const CustomDialogBox({Key? key, required this.title, required this.descriptions, required this.img, required this.onPress}) : super(key: key);
+  const CustomDialogBox(
+      {Key? key,
+      required this.title,
+      required this.descriptions,
+      this.img,
+      required this.onPress})
+      : super(key: key);
 
   @override
   _CustomDialogBoxState createState() => _CustomDialogBoxState();
@@ -32,17 +38,26 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
   contentBox(context) {
     return Container(
       padding: const EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
-      decoration: BoxDecoration(shape: BoxShape.rectangle, color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: const [
-        BoxShadow(color: Colors.black, offset: Offset(0, 10), blurRadius: 10),
-      ]),
+      decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.black, offset: Offset(0, 10), blurRadius: 10),
+          ]),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.transparent,
-            radius: 45,
-            child: ClipRRect(borderRadius: const BorderRadius.all(Radius.circular(45)), child: widget.img),
-          ),
+          widget.img != null
+              ? CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: 45,
+                  child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(45)),
+                      child: widget.img),
+                )
+              : SizedBox(),
           Visibility(
             visible: widget.title.isNotEmpty,
             child: Text(

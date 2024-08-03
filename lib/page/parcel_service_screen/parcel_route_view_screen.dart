@@ -297,7 +297,8 @@ class _ParcelRouteViewScreenState extends State<ParcelRouteViewScreen> {
                                                       onTap: () async {
                                                         ShowToastDialog
                                                             .showLoader(
-                                                                "Please wait"
+                                                                "please wait"
+                                                                    .tr
                                                                     .tr);
                                                         final Location
                                                             currentLocation =

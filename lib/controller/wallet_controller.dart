@@ -104,7 +104,7 @@ class WalletController extends GetxController {
 
   Future<dynamic> getTransaction() async {
     try {
-    isLoading.value = true;
+      isLoading.value = true;
       final response = await http.get(
           Uri.parse(
               "${API.transaction}?id_user_app=${Preferences.getInt(Preferences.userId)}"),
@@ -175,7 +175,7 @@ class WalletController extends GetxController {
 
   Future<dynamic> setAmount(String amount) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       Map<String, dynamic> bodyParams = {
         'id_user': Preferences.getInt(Preferences.userId),
         'cat_user': "user_app",

@@ -159,11 +159,15 @@ class RideData {
     tripCategory = json['trip_category'].toString();
     nom = json['nom'].toString();
     prenom = json['prenom'].toString();
-    if (json['stops'] != null && json['stops'].isNotEmpty && json['stops'].toString() != "[]") {
+    if (json['stops'] != null &&
+        json['stops'].isNotEmpty &&
+        json['stops'].toString() != "[]") {
       stops = <Stops>[];
-      json['stops'].forEach((v) {
-        stops!.add(Stops.fromJson(v));
-      });
+      if (json['stops'] is List) {
+        json['stops'].forEach((v) {
+          stops!.add(Stops.fromJson(v));
+        });
+      }
     } else {
       stops = [];
     }
@@ -252,7 +256,8 @@ class RideData {
     } else {
       data['stops'] = [];
     }
-    data['tax'] = taxModel != null ? taxModel!.map((v) => v.toJson()).toList() : null;
+    data['tax'] =
+        taxModel != null ? taxModel!.map((v) => v.toJson()).toList() : null;
     return data;
   }
 }

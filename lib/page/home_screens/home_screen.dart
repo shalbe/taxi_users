@@ -6,6 +6,7 @@ import 'package:cabme/controller/home_controller.dart';
 import 'package:cabme/model/driver_model.dart';
 import 'package:cabme/model/sub_category_model.dart';
 import 'package:cabme/model/vehicle_category_model.dart';
+import 'package:cabme/page/home_screens/payment_screen.dart';
 import 'package:cabme/themes/button_them.dart';
 import 'package:cabme/themes/constant_colors.dart';
 import 'package:cabme/themes/custom_dialog_box.dart';
@@ -20,7 +21,6 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -83,9 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
               : "${placeMarks.first.postalCode}, ");
       controller.departureController.text = address;
       setState(() {
-        print(location.latitude);
-        print(location.longitude);
-
         setDepartureMarker(
             LatLng(location.latitude ?? 0.0, location.longitude ?? 0.0));
       });
@@ -101,29 +98,32 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: ConstantColors.background,
       body: Stack(
         children: [
-          GoogleMap(
-            zoomControlsEnabled: false,
-            myLocationButtonEnabled: true,
-            padding: const EdgeInsets.only(
-              top: 8.0,
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: GoogleMap(
+              zoomControlsEnabled: false,
+              myLocationButtonEnabled: true,
+              padding: const EdgeInsets.only(
+                top: 8.0,
+              ),
+              compassEnabled: false,
+              initialCameraPosition: CameraPosition(
+                target: controller.center,
+                zoom: 14.0,
+              ),
+              minMaxZoomPreference: const MinMaxZoomPreference(8.0, 20.0),
+              buildingsEnabled: false,
+              onMapCreated: (GoogleMapController controller) async {
+                _controller = controller;
+                LocationData location = await currentLocation.getLocation();
+                _controller!.moveCamera(CameraUpdate.newLatLngZoom(
+                    LatLng(location.latitude ?? 0.0, location.longitude ?? 0.0),
+                    14));
+              },
+              polylines: Set<Polyline>.of(polyLines.values),
+              myLocationEnabled: true,
+              markers: controller.markers.values.toSet(),
             ),
-            compassEnabled: false,
-            initialCameraPosition: CameraPosition(
-              target: controller.center,
-              zoom: 14.0,
-            ),
-            minMaxZoomPreference: const MinMaxZoomPreference(8.0, 20.0),
-            buildingsEnabled: false,
-            onMapCreated: (GoogleMapController controller) async {
-              _controller = controller;
-              LocationData location = await currentLocation.getLocation();
-              _controller!.moveCamera(CameraUpdate.newLatLngZoom(
-                  LatLng(location.latitude ?? 0.0, location.longitude ?? 0.0),
-                  14));
-            },
-            polylines: Set<Polyline>.of(polyLines.values),
-            myLocationEnabled: true,
-            markers: controller.markers.values.toSet(),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,13 +165,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           return ListTile(
                             onTap: () {
+                              controller.esnurePaymentSettings();
+
                               // this will fetch data of request To/From "sub categories"
                               controller.selectedCategory =
                                   controller.categories[index];
                               controller.paymentType =
                                   controller.selectedCategory.paymentType!;
-                              print(
-                                  "selected Category ${controller.selectedCategory.name} payment type ${controller.paymentType}");
+                              log("selected Category ${controller.selectedCategory.name} payment type ${controller.paymentType}");
 
                               controller.getSubCategoriesListTo();
                               controller.getSubCategoriesListFrom();
@@ -189,13 +190,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                         GetBuilder<HomeController>(
                                           init: controller,
                                           builder: (controller) => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
-                                              const Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 16.0),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 16.0),
                                                 child: Text(
-                                                  "Select your location",
-                                                  style: TextStyle(
+                                                  "select_your_location".tr,
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
                                                     fontSize: 25,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black,
@@ -203,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                               ),
                                               SizedBox(
-                                                height: height * 0.7,
+                                                height: height * 0.6,
                                                 child: Scrollbar(
                                                   controller: controller
                                                       .locationScrollController,
@@ -295,21 +300,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                         GetBuilder<HomeController>(
                                           init: controller,
                                           builder: (controller) => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
-                                              const Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 16.0),
-                                                child: Text(
-                                                  "Select your Destination",
-                                                  style: TextStyle(
-                                                    fontSize: 25,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
+                                              Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 16.0),
+                                                  child: Text(
+                                                    "choose_destination".tr,
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontSize: 25,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                               SizedBox(
-                                                height: height * 0.6,
+                                                height: height * 0.58,
                                                 child: Scrollbar(
                                                   controller: controller
                                                       .destinationScrollController,
@@ -401,15 +413,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    const Row(
+                                                    Row(
                                                       children: [
-                                                        Icon(
+                                                        const Icon(
                                                             Icons
                                                                 .transfer_within_a_station_sharp,
                                                             size: 25),
                                                         Text(
-                                                          "Two Way",
-                                                          style: TextStyle(
+                                                          "Two Way".tr,
+                                                          style:
+                                                              const TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 18,
                                                           ),
@@ -449,6 +462,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   }).whenComplete(
                                 () {
                                   controller.disposeSelections();
+                                  controller.disposeSubCategories();
                                 },
                               );
                             },
@@ -461,12 +475,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: SizedBox(
                                     width: 40,
                                     child: CachedNetworkImage(
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 50),
                                         imageUrl:
-                                            "https://taxi-madina.com/assets/${controller.categories[index].image}"),
+                                            "https://admin.taxi-madina.com/assets/${controller.categories[index].image}"),
                                   ),
                                 ),
                                 Text(
-                                  controller.categories[index].name ?? "",
+                                  controller.categories[index].name?.tr ?? "",
                                   style: const TextStyle(fontSize: 18),
                                 ),
                               ],
@@ -506,15 +522,15 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: controller.departureIcon!,
       );
       departureLatLong = departure;
-      _controller!.animateCamera(
+      _controller?.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(departure.latitude, departure.longitude),
               zoom: 14),
         ),
       );
-
-      // _controller?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(departure.latitude, departure.longitude), zoom: 18)));
+      _controller?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: LatLng(departure.latitude, departure.longitude), zoom: 18)));
       if (departureLatLong != null && destinationLatLong != null) {
         getDirections();
         controller.confirmWidgetVisible.value = true;
@@ -638,6 +654,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeIn);
                 controller.confirmWidgetVisible.value = false;
+                controller.disposeSelections();
               },
             ),
           ),
@@ -649,52 +666,6 @@ class _HomeScreenState extends State<HomeScreen> {
               btnColor: ConstantColors.primary,
               txtColor: Colors.white,
               onPress: () async {
-                // Map<String, dynamic> bodyParams = {
-                //   'user_id': Preferences.getInt(Preferences.userId).toString(),
-                //   //from
-                //   'lat1': controller
-                //       .subCategoriesRequestFrom[
-                //           controller.selectedUserLocationTileIndex]
-                //       .name
-                //       .toString(),
-                //   //to
-                //   'lng1': controller
-                //       .subCategoriesRequestTo[
-                //           controller.selectedUserDestinationTileIndex]
-                //       .name
-                //       .toString(),
-                //   'lat2': "0",
-                //   'lng2': "0",
-                //   //price
-                //   'cout': controller.currentPrice.value,
-                //   'distance': "0",
-                //   'distance_unit': Constant.distanceUnit.toString(),
-                //   'duree': controller.duration.toString(),
-                //   'id_conducteur': "1",
-                //   'id_payment': "1",
-                //   'depart_name': controller
-                //       .subCategoriesRequestFrom[
-                //           controller.selectedUserLocationTileIndex]
-                //       .name
-                //       .toString(),
-                //   'destination_name': controller
-                //       .subCategoriesRequestTo[
-                //           controller.selectedUserDestinationTileIndex]
-                //       .name
-                //       .toString(),
-                //   'stops': "1",
-                //   'place':
-                //       controller.twoWayCondition.value ? "Two Way" : "One Way",
-                //   'number_poeple': "1",
-                //   'image': '0',
-                //   'image_name': "0",
-                //   'statut_round': '1',
-                //   'trip_objective': "0",
-                //   'age_children1': "0",
-                //   'age_children2': "0",
-                //   'age_children3': "0",
-                // };
-
                 tripOptionBottomSheet(context);
               },
             ),
@@ -703,8 +674,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  final passengerController = TextEditingController(text: "1");
 
   tripOptionBottomSheet(BuildContext context) {
     return showModalBottomSheet(
@@ -739,7 +708,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextField(
-                          controller: passengerController,
+                          controller: controller.passengerController,
                           textInputAction: TextInputAction.done,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -798,14 +767,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   }
                                 },
                                 child: SizedBox(
-                                  width: 60,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
                                   child: Row(
                                     children: [
+                                      Text("Add".tr,
+                                          style: const TextStyle(fontSize: 15)),
                                       Icon(
                                         Icons.add,
                                         color: ConstantColors.primary,
                                       ),
-                                      Text("Add".tr),
                                     ],
                                   ),
                                 ),
@@ -839,7 +810,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   title: "Book Now".tr,
                                   btnColor: ConstantColors.primary,
                                   txtColor: Colors.white, onPress: () async {
-                                if (passengerController.text.isEmpty) {
+                                if (controller
+                                    .passengerController.text.isEmpty) {
                                   ShowToastDialog.showToast(
                                       "Please Enter Passenger".tr);
                                 } else {
@@ -944,9 +916,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 controller.selectedVehicle.value =
                                     vehicleCategoryModel.data![index].id
                                         .toString();
-                                controller.tripPrice = double.parse(controller
-                                        .vehicleData!.minimumDeliveryCharges!) +
+                                controller.tripPrice.value = double.parse(
+                                        controller.vehicleData!
+                                            .minimumDeliveryCharges!) +
                                     double.parse(controller.currentPrice.value);
+                                log("trip price : ${controller.tripPrice.value}");
                               },
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -988,7 +962,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   child: Text(
                                                     vehicleCategoryModel
                                                         .data![index].libelle
-                                                        .toString(),
+                                                        .toString()
+                                                        .tr,
                                                     textAlign: TextAlign.start,
                                                     style: TextStyle(
                                                         fontSize: 18,
@@ -1120,8 +1095,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 await controller
                                     .getDriverDetails(
                                         controller.vehicleData!.id.toString(),
-                                        departureLatLong!.latitude.toString(),
-                                        departureLatLong!.longitude.toString())
+                                        departureLatLong?.latitude.toString(),
+                                        departureLatLong?.longitude.toString())
                                     .then((value) {
                                   if (value != null) {
                                     if (value.success == "Success") {
@@ -1141,7 +1116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         conformDataBottomSheet(
                                             context,
                                             driverData[0],
-                                            controller.tripPrice);
+                                            controller.tripPrice.value);
                                       } else {
                                         ShowToastDialog.showToast(
                                             "Driver not available".tr);
@@ -1171,6 +1146,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   conformDataBottomSheet(
       BuildContext context, DriverData driverModel, double tripPrice) {
+    controller.driverSelected.value = driverModel;
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -1404,9 +1380,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           Expanded(
                             child: ButtonThem.buildButton(context,
                                 btnHeight: 40,
-                                title: "Book now".tr,
+                                title: "Book Now".tr,
                                 btnColor: ConstantColors.primary,
                                 txtColor: Colors.white, onPress: () {
+                              controller.driverSelected.value = driverModel;
                               if (controller.paymentMethodType.value ==
                                   "Select Method") {
                                 ShowToastDialog.showToast(
@@ -1428,39 +1405,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .toString()
                                   });
                                 }
-                                if (controller.paymentType == 1) {
-                                  showBarModalBottomSheet(
-                                    backgroundColor: Colors.white,
-                                    context: context,
-                                    builder: (context) => WebViewWidget(
-                                        controller:
-                                            controller.webViewcontroller),
-                                  );
-                                } else {
-                                  controller
-                                      .bookRide(controller.getBodyParams())
-                                      .then((value) {
-                                    if (value != null) {
+
+                                controller
+                                    .bookRide(controller.getBodyParams())
+                                    .then((value) {
+                                  if (value != null) {
+                                    if (controller.paymentType == 1) {
+                                      Get.to(() => const PaymentScreen());
+                                    } else {
                                       if (value['success'] == "success") {
-                                        Get.back();
                                         controller.departureController.clear();
                                         controller.destinationController
                                             .clear();
                                         polyLines = {};
                                         departureLatLong = null;
                                         destinationLatLong = null;
-                                        passengerController.clear();
+                                        controller.passengerController.clear();
                                         tripPrice = 0.0;
                                         controller.markers.clear();
                                         controller.clearData();
-                                        getDirections();
+                                        // getDirections();
+                                        Get.close(1);
                                         showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return CustomDialogBox(
                                                 title: "",
                                                 descriptions:
-                                                    "Your booking has been sent successfully",
+                                                    "Your booking has been sent successfully"
+                                                        .tr,
                                                 onPress: () {
                                                   Get.back();
                                                 },
@@ -1470,8 +1443,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             });
                                       }
                                     }
-                                  });
-                                }
+                                  }
+                                });
                               }
                             }),
                           ),
@@ -1559,7 +1532,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _pendingPaymentDialog(BuildContext context) {
     // set up the button
     Widget okButton = TextButton(
-      child: const Text("OK"),
+      child: Text("OK".tr),
       onPressed: () {
         Get.back();
       },
@@ -1567,7 +1540,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: const Text("Cab me"),
+      title: const Text("Taxi Madina"),
       content: Text(
           "You have pending payments. Please complete payment before book new trip."
               .tr),
@@ -1585,6 +1558,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _paymentMethodDialog(BuildContext context) {
+    controller.paymentSettingModel.value = Constant.getPaymentSetting();
+
     return showModalBottomSheet(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(

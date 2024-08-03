@@ -143,7 +143,7 @@ class MyProfileScreen extends StatelessWidget {
                         children: [
                           buildShowDetails(
                             subtitle: myProfileController.name.toString(),
-                            title: "First Name".tr,
+                            title: "First name".tr,
                             iconData: Icons.person_outline,
                             isEditIcon: true,
                             onPress: () {

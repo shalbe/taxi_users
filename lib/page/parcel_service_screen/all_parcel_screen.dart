@@ -306,7 +306,7 @@ class AllParcelScreen extends StatelessWidget {
                                               child: InkWell(
                                                   onTap: () async {
                                                     ShowToastDialog.showLoader(
-                                                        "Please wait");
+                                                        "please wait".tr);
                                                     final Location
                                                         currentLocation =
                                                         Location();

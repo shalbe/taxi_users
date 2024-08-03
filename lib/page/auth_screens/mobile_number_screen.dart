@@ -68,7 +68,7 @@ class MobileNumberScreen extends StatelessWidget {
                                 controller.phoneNumber.value =
                                     phone.completeNumber;
                               },
-                              invalidNumberMessage: "number invalid",
+                              invalidNumberMessage: "number invalid".tr,
                               showDropdownIcon: false,
                               disableLengthCheck: true,
                               decoration: InputDecoration(

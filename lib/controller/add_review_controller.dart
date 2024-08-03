@@ -85,7 +85,7 @@ class AddReviewController extends GetxController {
 
   Future<bool?> addReview(Map<String, String> bodyParams) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.post(Uri.parse(API.addReview),
           headers: API.header, body: jsonEncode(bodyParams));
 

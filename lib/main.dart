@@ -118,7 +118,7 @@ class MyApp extends StatelessWidget {
       }
     });
 
-    await FirebaseMessaging.instance.subscribeToTopic("cabme");
+    await FirebaseMessaging.instance.subscribeToTopic("TaxiMadina");
   }
 
   Future<void> initialize(BuildContext context) async {
@@ -149,7 +149,9 @@ class MyApp extends StatelessWidget {
       const NotificationDetails notificationDetails = NotificationDetails(
           android: AndroidNotificationDetails(
         "01",
-        "cabme",
+        "Taxi Madina",
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound("default"),
         importance: Importance.max,
         priority: Priority.high,
       ));
@@ -179,7 +181,7 @@ class MyApp extends StatelessWidget {
       }
     });
     return GetMaterialApp(
-      title: 'CabMe',
+      title: 'Taxi Madina',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: ConstantColors.primary,

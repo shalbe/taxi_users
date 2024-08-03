@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:cabme/constant/constant.dart';
 import 'package:cabme/constant/show_toast_dialog.dart';
+import 'package:cabme/controller/dash_board_controller.dart';
 import 'package:cabme/model/driver_location_update.dart';
 import 'package:cabme/model/driver_model.dart';
 import 'package:cabme/model/payment_method_model.dart';
@@ -26,6 +27,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../model/categories_model.dart';
 import '../model/payment_setting_model.dart';
+import '../themes/custom_dialog_box.dart';
 
 class HomeController extends GetxController {
   //for Choose your Rider
@@ -47,13 +49,13 @@ class HomeController extends GetxController {
   late PaymentMethodData? paymentMethodData;
 
   RxString tripOptionCategory = "General".obs;
-  RxString paymentMethodType = "Select Method".obs;
+  RxString paymentMethodType = "Select Method".tr.obs;
   RxString paymentMethodId = "".obs;
   RxDouble distance = 0.0.obs;
   RxString duration = "".obs;
 
   var paymentSettingModel = PaymentSettingModel().obs;
-
+  Rx<DriverData> driverSelected = DriverData().obs;
   RxBool cash = false.obs;
   RxBool wallet = false.obs;
   RxBool stripe = false.obs;
@@ -64,8 +66,8 @@ class HomeController extends GetxController {
   RxBool flutterWave = false.obs;
   RxBool mercadoPago = false.obs;
   RxBool payFast = false.obs;
-
-  // for choosing destination and user location
+  TextEditingController passengerController =
+      TextEditingController(text: "1"); // for choosing destination and user location
 
   int selectedUserLocationTileIndex = (-1);
   int selectedUserDestinationTileIndex = (-1);
@@ -80,37 +82,25 @@ class HomeController extends GetxController {
   RxBool twoWayCondition = false.obs;
   RxString currentPrice = "".obs;
   RxBool confirmWidgetVisible = false.obs;
-  double tripPrice = 0.0;
+  RxDouble tripPrice = (0.0).obs;
   bool subCategoriesIsLoading = false;
-  WebViewController webViewcontroller = WebViewController()
-    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    ..setBackgroundColor(const Color(0x00000000))
-    ..setNavigationDelegate(
-      NavigationDelegate(
-        onProgress: (int progress) {
-          // Update loading bar.
-        },
-        onPageStarted: (String url) {},
-        onPageFinished: (String url) {},
-        onHttpError: (HttpResponseError error) {},
-        onWebResourceError: (WebResourceError error) {},
-        onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('https://www.youtube.com/')) {
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
-      ),
-    )
-    ..loadRequest(Uri.parse('https://flutter.dev'));
+  WebViewController? webViewcontroller;
   int paymentType = 0; //for door to door and 1 for city to city;
+  final DashBoardController dashBoardController =
+      Get.find<DashBoardController>();
   @override
   void onInit() async {
+    dashBoardController.getPaymentSettingData();
     paymentSettingModel.value = Constant.getPaymentSetting();
     getCategories();
     setIcons();
     getTaxiData();
+
     super.onInit();
+  }
+
+  esnurePaymentSettings() {
+    paymentSettingModel.value = Constant.getPaymentSetting();
   }
 
   Map<String, dynamic> getBodyParams() {
@@ -127,12 +117,12 @@ class HomeController extends GetxController {
       'lat2': "0",
       'lng2': "0",
       //price
-      'cout': currentPrice.value,
+      'cout': tripPrice.value,
       'distance': "0",
       'distance_unit': Constant.distanceUnit.toString(),
       'duree': duration.toString(),
-      'id_conducteur': "1",
-      'id_payment': "1",
+      'id_conducteur': driverSelected.value.id!,
+      'id_payment': paymentMethodId.value,
       'depart_name': subCategoriesRequestFrom[selectedUserLocationTileIndex]
           .name
           .toString(),
@@ -142,7 +132,7 @@ class HomeController extends GetxController {
               .toString(),
       'stops': "1",
       'place': twoWayCondition.value ? "Two Way" : "One Way",
-      'number_poeple': "1",
+      'number_poeple': passengerController.text,
       'image': '0',
       'image_name': "0",
       'statut_round': '1',
@@ -188,9 +178,12 @@ class HomeController extends GetxController {
     selectedUserLocationTileIndex = -1;
     twoWayCondition.value = false;
     selectedUserDestinationTileIndex = -1;
-    // subCategoriesRequestTo = [];
-    // subCategoriesRequestFrom = [];
     update();
+  }
+
+  void disposeSubCategories() {
+    subCategoriesRequestTo = [];
+    subCategoriesRequestFrom = [];
   }
 
   void getSubCategoriesListTo() async {
@@ -260,7 +253,7 @@ class HomeController extends GetxController {
   }
 
   addStops() async {
-    ShowToastDialog.showLoader("Please wait");
+    ShowToastDialog.showLoader("please wait".tr);
     multiStopList.add(AddStopModel(
         editingController: TextEditingController(),
         latitude: "",
@@ -277,7 +270,7 @@ class HomeController extends GetxController {
   }
 
   removeStops(int index) {
-    ShowToastDialog.showLoader("Please wait");
+    ShowToastDialog.showLoader("please wait".tr);
     multiStopList.removeAt(index);
     multiStopListNew = List<AddStopModel>.generate(
       multiStopList.length,
@@ -336,7 +329,7 @@ class HomeController extends GetxController {
 
   Future<dynamic> getDurationDistance(
       LatLng departureLatLong, LatLng destinationLatLong) async {
-    ShowToastDialog.showLoader("Please wait");
+    ShowToastDialog.showLoader("please wait".tr);
     double originLat, originLong, destLat, destLong;
     originLat = departureLatLong.latitude;
     originLong = departureLatLong.longitude;
@@ -395,7 +388,7 @@ class HomeController extends GetxController {
 
   Future<dynamic> getUserPendingPayment() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
 
       Map<String, dynamic> bodyParams = {
         'user_id': Preferences.getInt(Preferences.userId)
@@ -431,7 +424,7 @@ class HomeController extends GetxController {
 
   Future<VehicleCategoryModel?> getVehicleCategory() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.get(
         Uri.parse(API.getVehicleCategory),
         headers: API.header,
@@ -465,9 +458,11 @@ class HomeController extends GetxController {
   }
 
   Future<DriverModel?> getDriverDetails(
-      String typeVehicle, String lat1, String lng1) async {
+      String typeVehicle, String? lat1, String? lng1) async {
+    lat1 ??= "0.0";
+    lng1 ??= "0.0";
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.get(
           Uri.parse(
               "${API.driverDetails}?type_vehicle=$typeVehicle&lat1=$lat1&lng1=$lng1"),
@@ -503,7 +498,7 @@ class HomeController extends GetxController {
 
   Future<dynamic> setFavouriteRide(Map<String, String> bodyParams) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.post(Uri.parse(API.setFavouriteRide),
           headers: API.header, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
@@ -532,14 +527,78 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<dynamic> bookRide(Map<String, dynamic> bodyParams) async {
+  Future<dynamic> bookRide(
+    Map<String, dynamic> bodyParams,
+  ) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.post(Uri.parse(API.bookRides),
           headers: API.header, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
+      log("responseBody : $responseBody");
       if (response.statusCode == 200) {
+        // SendNotification.sendMessageNotification(token: , payload: )
+        log("book ride : $responseBody");
         ShowToastDialog.closeLoader();
+        if (paymentType == 1) {
+          final getFatooraUrl = await http.get(
+              Uri.parse(
+                  "${API.getFatoora}?oid=${responseBody["data"][0]["id"]}"),
+              headers: API.header);
+          log("getFatoora Url : ${jsonDecode(getFatooraUrl.body)["url"]}");
+          webViewcontroller = WebViewController()
+            ..setJavaScriptMode(JavaScriptMode.unrestricted)
+            ..setBackgroundColor(const Color(0x00000000))
+            ..setNavigationDelegate(
+              NavigationDelegate(
+                onProgress: (int progress) {
+                  // Update loading bar.
+                },
+                onPageStarted: (String url) {},
+                onPageFinished: (String url) async {
+                  log(url);
+                  if (url.contains("callback")) {
+                    final callBackResponse = await http.get(Uri.parse(url));
+                    final responseBody = jsonDecode(callBackResponse.body);
+                    if (responseBody["IsSuccess"] == false) {
+                      clearData();
+                      Get.close(2);
+                      Get.dialog(CustomDialogBox(
+                        title: "",
+                        descriptions:
+                            "Your booking has not been sent please try again"
+                                .tr,
+                        onPress: () {
+                          Get.back();
+                        },
+                      ));
+                    } else {
+                      Get.close(1);
+                      departureController.clear();
+                      destinationController.clear();
+                      clearData();
+                      tripPrice.value = 0.0;
+
+                      Get.dialog(CustomDialogBox(
+                        title: "",
+                        descriptions: "Your booking has been sent successfully",
+                        onPress: () {
+                          Get.back();
+                        },
+                        img: Image.asset('assets/images/green_checked.png'),
+                      ));
+                    }
+                  }
+                },
+                onHttpError: (HttpResponseError error) {},
+                onWebResourceError: (WebResourceError error) {},
+                onNavigationRequest: (NavigationRequest request) {
+                  return NavigationDecision.navigate;
+                },
+              ),
+            )
+            ..loadRequest(Uri.parse(jsonDecode(getFatooraUrl.body)["url"]));
+        }
         return responseBody;
       } else {
         ShowToastDialog.closeLoader();
@@ -556,10 +615,13 @@ class HomeController extends GetxController {
 
       ShowToastDialog.showToast(e.message.toString());
     } on Error catch (e) {
+      log(e.toString());
+
       ShowToastDialog.closeLoader();
 
       ShowToastDialog.showToast(e.toString());
     } catch (e) {
+      log(e.toString());
       ShowToastDialog.closeLoader();
 
       ShowToastDialog.showToast(e.toString());

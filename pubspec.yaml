@@ -90,15 +90,12 @@ flutter_native_splash:
   image: assets/images/splash_icon_for_both.png
   branding: assets/images/splash_icon_for_both.png
   branding_bottom_padding: 24
-  color_dark: "#121212"
-  image_dark: assets/images/splash_icon_for_both.png
-  branding_dark: assets/images/splash_icon_for_both.png
+
 
   android_12:
     image: assets/images/splash_icon_for_both.png
     icon_background_color: "#ffffff"
-    image_dark: assets/images/splash_icon_for_both.png
-    icon_background_color_dark: "#121212"
+
 
   web: false
 dependency_overrides:

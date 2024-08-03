@@ -54,15 +54,18 @@ class ConversationController extends GetxController {
         'id_user': receiverId,
         'cat_user': "driver",
       };
-      final response = await http.post(Uri.parse(API.getFcmToken), headers: API.header, body: jsonEncode(bodyParams));
+      final response = await http.post(Uri.parse(API.getFcmToken),
+          headers: API.header, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
 
       if (response.statusCode == 200 && responseBody['success'] == "success") {
         receiverToken.value = responseBody['data']['fcm_id'];
-      } else if (response.statusCode == 200 && responseBody['success'] == "failed") {
+      } else if (response.statusCode == 200 &&
+          responseBody['success'] == "failed") {
         ShowToastDialog.showToast(responseBody['error']);
       } else {
-        ShowToastDialog.showToast('Something want wrong. Please try again later');
+        ShowToastDialog.showToast(
+            'Something want wrong. Please try again later');
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {
@@ -91,7 +94,8 @@ class ConversationController extends GetxController {
       'type': type,
     };
 
-    String idCollection = "${senderId.value < receiverId.value ? senderId.value : receiverId.value}-${orderId.value}-${senderId.value < receiverId.value ? receiverId.value : senderId.value}";
+    String idCollection =
+        "${senderId.value < receiverId.value ? senderId.value : receiverId.value}-${orderId.value}-${senderId.value < receiverId.value ? receiverId.value : senderId.value}";
 
     Map<String, dynamic> inboxData = {
       'id': idCollection,
@@ -107,7 +111,11 @@ class ConversationController extends GetxController {
     };
 
     Constant.conversation.doc(idCollection).set(inboxData);
-    Constant.conversation.doc(idCollection).collection("thread").doc(id).set(messageData);
+    Constant.conversation
+        .doc(idCollection)
+        .collection("thread")
+        .doc(id)
+        .set(messageData);
 
     Map<String, dynamic> notificationData = {
       'id': id,
@@ -131,6 +139,10 @@ class ConversationController extends GetxController {
       'message': notificationData,
       'isGroup': false,
     };
-    SendNotification.sendMessageNotification(receiverToken.value, senderName.value, message, payload);
+    SendNotification.sendMessageNotification(
+        token: receiverToken.value,
+        title: senderName.value,
+        body: message,
+        payload: payload);
   }
 }

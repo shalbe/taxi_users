@@ -159,7 +159,7 @@ class ParcelServiceController extends GetxController {
 
   Future<dynamic> getDurationDistance(
       LatLng departureLatLong, LatLng destinationLatLong) async {
-    ShowToastDialog.showLoader("Please wait");
+    ShowToastDialog.showLoader("please wait".tr);
     double originLat, originLong, destLat, destLong;
     originLat = departureLatLong.latitude;
     originLong = departureLatLong.longitude;
@@ -271,7 +271,7 @@ class ParcelServiceController extends GetxController {
 
   bookParcelRide() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
 
       var request = http.MultipartRequest(
         'POST',

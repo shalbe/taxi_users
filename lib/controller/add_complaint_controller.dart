@@ -42,7 +42,7 @@ class AddComplaintController extends GetxController {
 
   Future<bool?> addComplaint(Map<String, String> bodyParams) async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.post(Uri.parse(API.addComplaint),
           headers: API.header, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
@@ -78,7 +78,7 @@ class AddComplaintController extends GetxController {
 
   Future getComplaint() async {
     try {
-      ShowToastDialog.showLoader("Please wait");
+      ShowToastDialog.showLoader("please wait".tr);
       final response = await http.get(
         Uri.parse(
             "${API.getComplaint}?ride_type=${rideType.value}&order_id=${rideType.value == "ride" ? rideData.value.id : parcelData.value.id}&user_type=customer"),
