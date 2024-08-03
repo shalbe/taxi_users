@@ -232,8 +232,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       return ListTile(
                                                         selected: index ==
                                                             controller
-                                                                .selectedUserLocationTileIndex,
+                                                                .selectedUserLocationTileIndex
+                                                                .value,
                                                         onTap: () {
+                                                          print(index ==
+                                                              controller
+                                                                  .selectedUserLocationTileIndex
+                                                                  .value);
                                                           controller
                                                               .selectUserLocationTile(
                                                                   index);
@@ -260,7 +265,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               Visibility(
                                                 visible: controller
-                                                        .selectedUserLocationTileIndex !=
+                                                        .selectedUserLocationTileIndex
+                                                        .value !=
                                                     -1,
                                                 child: Align(
                                                   alignment:
@@ -346,7 +352,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       return ListTile(
                                                         selected: index ==
                                                             controller
-                                                                .selectedUserDestinationTileIndex,
+                                                                .selectedUserDestinationTileIndex
+                                                                .value,
                                                         onTap: () {
                                                           controller
                                                               .selectUserDestinationTile(
@@ -430,21 +437,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ],
                                                     ),
                                                     GetX<HomeController>(
-                                                      builder: (controller) =>
-                                                          Switch(
-                                                        inactiveThumbColor:
-                                                            Colors.grey,
-                                                        activeTrackColor:
-                                                            Colors.blue,
-                                                        value: controller
-                                                            .twoWayCondition
-                                                            .value,
-                                                        onChanged: (value) {
-                                                          controller
+                                                      builder: (controller) => Switch(
+                                                          inactiveThumbColor:
+                                                              Colors.grey,
+                                                          activeTrackColor:
+                                                              Colors.blue,
+                                                          value: controller
                                                               .twoWayCondition
-                                                              .value = value;
-                                                        },
-                                                      ),
+                                                              .value,
+                                                          onChanged: controller
+                                                              .toggleSwitch),
                                                     ),
                                                   ],
                                                 ),

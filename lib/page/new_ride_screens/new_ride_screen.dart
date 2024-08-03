@@ -526,7 +526,7 @@ class NewRideScreen extends StatelessWidget {
                                 child: ButtonThem.buildButton(context,
                                     btnHeight: 40,
                                     title: data.statutPaiement == "yes"
-                                        ? "Paid".tr
+                                        ? "paid".tr
                                         : "Pay Now".tr,
                                     btnColor: data.statutPaiement == "yes"
                                         ? Colors.green

@@ -1,5 +1,9 @@
 const Map<String, String> enUS = {
   'Get started': 'Get started',
+  "You don't have any rented vehicle. please book ride.":
+      "You don't have any rented vehicle. please book ride.",
+  "You have not booked any trip.\n Please book a cab now":
+      "You have not booked any trip.\n Please book a cab now",
   'All Rides': 'All Rides',
   'Pay Now': 'Pay Now',
   'parcel_service': 'Parcel Service',
@@ -185,7 +189,6 @@ const Map<String, String> enUS = {
   'Tip to driver': "Tip to driver",
   'Topup Wallet': "Topup Wallet",
   'Add Topup Amount': "Add Topup Amount",
-  'Select Payment Option': "Select Payment Option",
   'Cash': "Cash",
   'Wallet': "Wallet",
   'Stripe': "Stripe",
@@ -262,8 +265,6 @@ const Map<String, String> enUS = {
   'Password Field do not match  !!': "Password Field do not match  !!",
   'Password Updated!!': "Password Updated!!",
   'Upload successfully!': "Upload successfully!",
-  'You have not booked any trip.\n Please book a cab now':
-      "You have not booked any trip.\n Please book a cab now",
   'Rate for': "Rate for",
   'Type comment....': "Type comment....",
   'Submit review': "Submit review",
@@ -309,6 +310,6 @@ const Map<String, String> enUS = {
   'Phone number is required.': "Phone number is required.",
   'Parcel weight in Kg': "Parcel weight in Kg",
   'Parcel dimension(In ft.)': "Parcel dimension(In ft.)",
-  "You don't have any rented vehicle. please book ride.":
-      "You don't have any rented vehicle. please book ride.",
+  "Cancel Ride": "Cancel Ride",
+  "SOS": "SOS",
 };

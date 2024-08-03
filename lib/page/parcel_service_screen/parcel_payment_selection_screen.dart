@@ -669,7 +669,7 @@ class ParcelPaymentSelectionScreen extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Select payment Option".tr,
+                        Text("Select Payment Option".tr,
                             style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,

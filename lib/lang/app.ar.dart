@@ -1,4 +1,5 @@
 const Map<String, String> ar = {
+  "Select Payment Option": "اختر خيار الدفع",
   'First name': 'الاسم الأول',
   'Last Name': 'الاسم الأخير',
   'term_service': 'شروط الخدمة',
@@ -171,7 +172,6 @@ const Map<String, String> ar = {
   'Tip to driver': "إكرامية للسائق",
   'Topup Wallet': "إعادة شحن المحفظة",
   'Add Topup Amount': "إضافة مبلغ إعادة الشحن",
-  'Select Payment Option': "اختر خيار الدفع",
   'Cash': "نقدي",
   'Wallet': "محفظة",
   'Stripe': "سترايب",
@@ -299,4 +299,10 @@ const Map<String, String> ar = {
   'Pay Now': 'ادفع الآن',
   "You don't have any rented vehicle. please book ride.":
       "ليس لديك أي مركبة مستأجرة. يرجى حجز رحلة.",
+  "You have not booked any trip.\n Please book a cab now":
+      "لم تقم بحجز أي رحلة.\n يرجى حجز سيارة أجرة الآن",
+  "Cancel Ride": "إلغاء الرحلة",
+  "SOS": "نجدة",
+  "Trip Details": "تفاصيل الرحلة",
+  "Proceed to Pay": "الانتقال إلى الدفع",
 };

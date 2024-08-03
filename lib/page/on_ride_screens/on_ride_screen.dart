@@ -288,7 +288,7 @@ class OnRideScreens extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 10),
                                 child: ButtonThem.buildButton(
                                   context,
-                                  title: 'sos'.tr,
+                                  title: 'SOS'.tr,
                                   btnHeight: 35,
                                   btnWidthRatio: 0.2,
                                   btnColor: ConstantColors.primary,

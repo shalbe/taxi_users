@@ -66,11 +66,11 @@ class HomeController extends GetxController {
   RxBool flutterWave = false.obs;
   RxBool mercadoPago = false.obs;
   RxBool payFast = false.obs;
-  TextEditingController passengerController =
-      TextEditingController(text: "1"); // for choosing destination and user location
+  TextEditingController passengerController = TextEditingController(
+      text: "1"); // for choosing destination and user location
 
-  int selectedUserLocationTileIndex = (-1);
-  int selectedUserDestinationTileIndex = (-1);
+  RxInt selectedUserLocationTileIndex = (-1).obs;
+  RxInt selectedUserDestinationTileIndex = (-1).obs;
 
   List<CategoryModel> categories = [];
   late CategoryModel selectedCategory;
@@ -107,14 +107,14 @@ class HomeController extends GetxController {
     return {
       'user_id': Preferences.getInt(Preferences.userId).toString(),
       //from
-      'lat1': subCategoriesRequestFrom[selectedUserLocationTileIndex]
+      'lat1': subCategoriesRequestFrom[selectedUserLocationTileIndex.value]
           .name
           .toString(),
       //to
-      'lng1': subCategoriesRequestTo[selectedUserDestinationTileIndex]
+      'lng1': subCategoriesRequestTo[selectedUserDestinationTileIndex.value]
           .name
           .toString(),
-      'lat2': "0",
+      'lat2': paymentType,
       'lng2': "0",
       //price
       'cout': tripPrice.value,
@@ -123,14 +123,15 @@ class HomeController extends GetxController {
       'duree': duration.toString(),
       'id_conducteur': driverSelected.value.id!,
       'id_payment': paymentMethodId.value,
-      'depart_name': subCategoriesRequestFrom[selectedUserLocationTileIndex]
-          .name
-          .toString(),
-      'destination_name':
-          subCategoriesRequestTo[selectedUserDestinationTileIndex]
+      'depart_name':
+          subCategoriesRequestFrom[selectedUserLocationTileIndex.value]
               .name
               .toString(),
-      'stops': "1",
+      'destination_name':
+          subCategoriesRequestTo[selectedUserDestinationTileIndex.value]
+              .name
+              .toString(),
+      'stops': [],
       'place': twoWayCondition.value ? "Two Way" : "One Way",
       'number_poeple': passengerController.text,
       'image': '0',
@@ -150,18 +151,19 @@ class HomeController extends GetxController {
   }
 
   void selectUserLocationTile(int index) {
-    selectedUserLocationTileIndex = index;
+    selectedUserLocationTileIndex.value = index;
     update();
+    getCurrentPrice();
   }
 
   void selectUserDestinationTile(int index) {
-    selectedUserDestinationTileIndex = index;
+    selectedUserDestinationTileIndex.value = index;
     confirmWidgetVisible.value = true;
     update();
   }
 
   void disposeUserLocationSelection() {
-    selectedUserLocationTileIndex = -1;
+    selectedUserLocationTileIndex.value = -1;
     update();
   }
 
@@ -170,14 +172,14 @@ class HomeController extends GetxController {
   }
 
   void disposeUserDestinationSelection() {
-    selectedUserDestinationTileIndex = -1;
+    selectedUserDestinationTileIndex.value = -1;
     update();
   }
 
   void disposeSelections() {
-    selectedUserLocationTileIndex = -1;
+    selectedUserLocationTileIndex.value = -1;
     twoWayCondition.value = false;
-    selectedUserDestinationTileIndex = -1;
+    selectedUserDestinationTileIndex.value = -1;
     update();
   }
 
@@ -205,12 +207,22 @@ class HomeController extends GetxController {
     update();
   }
 
+  void toggleSwitch(bool value) {
+    twoWayCondition.value = value;
+    getCurrentPrice();
+  }
+
   void getCurrentPrice() {
-    SubCategoryModel subCategoryModel =
-        subCategoriesRequestTo[selectedUserDestinationTileIndex];
-    currentPrice.value = twoWayCondition.value
-        ? subCategoryModel.price2 ?? 0.toDouble().toInt().toString()
-        : subCategoryModel.price ?? 0.toDouble().toInt().toString();
+    if (selectedUserDestinationTileIndex.value == -1) {
+      currentPrice.value = "0";
+    } else {
+      SubCategoryModel subCategoryModel =
+          subCategoriesRequestTo[selectedUserDestinationTileIndex.value];
+      currentPrice.value = twoWayCondition.value
+          ? subCategoryModel.price2 ?? 0.toDouble().toInt().toString()
+          : subCategoryModel.price ?? 0.toDouble().toInt().toString();
+    }
+    print(currentPrice.value);
   }
 
   void rideCreation(Map<String, String> bodyParams) {}
@@ -573,7 +585,7 @@ class HomeController extends GetxController {
                         },
                       ));
                     } else {
-                      Get.close(1);
+                      Get.close(2);
                       departureController.clear();
                       destinationController.clear();
                       clearData();

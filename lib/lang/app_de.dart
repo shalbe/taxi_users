@@ -1,6 +1,13 @@
 const Map<String, String> deGR = {
+  "Proceed to Pay": "Zur Zahlung fortfahren",
+  "Select Payment Option": "Zahlungsoption auswählen",
+  "Trip Details": "Reisedetails",
+  "Cancel Ride": "Fahrt stornieren",
+  "SOS": "SOS",
   "You don't have any rented vehicle. please book ride.":
       "Sie haben kein gemietetes Fahrzeug. Bitte buchen Sie eine Fahrt.",
+  "You have not booked any trip.\n Please book a cab now":
+      "Sie haben keine Fahrt gebucht.\n Bitte buchen Sie jetzt ein Taxi",
   'add_complaint': 'Beschwerde hinzufügen',
   'Add Complaint': 'Beschwerde hinzufügen',
   'Get started': 'Loslegen',

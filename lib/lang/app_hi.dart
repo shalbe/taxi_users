@@ -1,4 +1,8 @@
 const Map<String, String> hiIN = {
+  "You don't have any rented vehicle. please book ride.":
+      "आपके पास कोई किराए का वाहन नहीं है। कृपया सवारी बुक करें।",
+  "You have not booked any trip.\n Please book a cab now":
+      "आपने कोई यात्रा बुक नहीं की है।\n कृपया अब एक टैक्सी बुक करें",
   'Your booking has not been sent please try again':
       'आपकी बुकिंग नहीं भेजी गई, कृपया पुनः प्रयास करें',
   'Your booking has been sent successfully':
@@ -141,6 +145,9 @@ const Map<String, String> hiIN = {
   'all_parcel': 'सभी पार्सल',
   'add_complaint': 'शिकायत जोड़ें',
   'Add Complaint': 'शिकायत जोड़ें',
-  "You don't have any rented vehicle. please book ride.":
-      "आपके पास कोई किराए का वाहन नहीं है। कृपया सवारी बुक करें।",
+  "Cancel Ride": "सवारी रद्द करें",
+  "SOS": "एसओएस",
+  "Trip Details": "यात्रा विवरण",
+  "Select Payment Option": "भुगतान विकल्प चुनें",
+  "Proceed to Pay": "भुगतान के लिए आगे बढ़ें",
 };

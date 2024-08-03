@@ -1,6 +1,14 @@
 const Map<String, String> ruRU = {
+    "Proceed to Pay": "Перейти к оплате",
+
+  "Trip Details": "Детали поездки",
+  "Select Payment Option": "Выберите способ оплаты",
+  "SOS": "SOS",
+  "Cancel Ride": "Отменить поездку",
   "You don't have any rented vehicle. please book ride.":
       "У вас нет арендованного транспортного средства. Пожалуйста, закажите поездку.",
+  "You have not booked any trip.\n Please book a cab now":
+      "Вы не забронировали поездку.\n Пожалуйста, забронируйте такси сейчас",
   'Your booking has been sent successfully': 'Ваш заказ был успешно отправлен',
   'Login With Phone Number': 'Войти с номером телефона',
   'You don’t have an account yet? ': 'У вас еще нет аккаунта?',

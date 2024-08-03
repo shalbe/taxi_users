@@ -1,6 +1,13 @@
 const Map<String, String> trFR = {
+  "Proceed to Pay": "Procéder au paiement",
+  "Trip Details": "Détails du voyage",
+  "Select Payment Option": "Choisir l'option de paiement",
+  "Cancel Ride": "Annuler la course",
+  "SOS": "SOS",
   "You don't have any rented vehicle. please book ride.":
       "Vous n'avez pas de véhicule loué. Veuillez réserver une course.",
+  "You have not booked any trip.\n Please book a cab now":
+      "Vous n'avez réservé aucun voyage.\n Veuillez réserver un taxi maintenant",
   'add_complaint': 'Ajouter une plainte',
   'Add Complaint': 'Ajouter une plainte',
   'Get started': 'Commencer',

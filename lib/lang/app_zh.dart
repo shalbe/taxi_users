@@ -1,4 +1,12 @@
 const Map<String, String> zhCH = {
+    "Proceed to Pay": "继续支付",
+
+  "Select Payment Option": "选择支付选项",
+  "Trip Details": "行程详情",
+  "Cancel Ride": "取消行程",
+  "SOS": "紧急求救",
+  "You have not booked any trip.\n Please book a cab now":
+      "您没有预订任何行程。\n 请立即预订出租车",
   "You don't have any rented vehicle. please book ride.": "您没有任何租赁车辆。请预订行程。",
   'First name': '名字',
   'Last Name': '姓',

@@ -1,6 +1,8 @@
 const Map<String, String> ptPO = {
   "You don't have any rented vehicle. please book ride.":
       "Você não tem nenhum veículo alugado. por favor, reserve uma viagem.",
+  "You have not booked any trip.\n Please book a cab now":
+      "Você não reservou nenhuma viagem.\n Por favor, reserve um táxi agora",
   'add_complaint': 'Adicionar reclamação',
   'Add Complaint': 'Adicionar reclamação',
   'Get started': 'Começar',
@@ -144,4 +146,11 @@ const Map<String, String> ptPO = {
       'Sua reserva não foi enviada, por favor, tente novamente',
   'Your booking has been sent successfully':
       'Sua reserva foi enviada com sucesso',
+  "Cancel Ride": "Cancelar viagem",
+    "SOS": "SOS",
+  "Trip Details": "Detalhes da viagem",
+  "Select Payment Option": "Selecionar opção de pagamento",
+    "Proceed to Pay": "Proceder para o pagamento",
+
+
 };

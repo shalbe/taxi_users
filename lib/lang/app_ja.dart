@@ -138,4 +138,11 @@ const Map<String, String> jaJP = {
   'Add Complaint': '苦情を追加',
   "You don't have any rented vehicle. please book ride.":
       "レンタル車両がありません。乗車を予約してください。",
+  "You have not booked any trip.\n Please book a cab now":
+      "あなたは旅行を予約していません。\n 今すぐタクシーを予約してください",
+  "Cancel Ride": "乗車をキャンセル",
+  "SOS": "SOS",
+  "Trip Details": "旅行の詳細",
+  "Select Payment Option": "支払いオプションを選択",
+  "Proceed to Pay": "支払いに進む",
 };

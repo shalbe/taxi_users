@@ -48,7 +48,7 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
 
   String? type;
   RideData? rideData;
-  String driverEstimateArrivalTime = '';
+  String? driverEstimateArrivalTime = '';
 
   @override
   void initState() {
@@ -66,12 +66,8 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
       type = argumentData['type'];
       rideData = argumentData['data'];
 
-      departureLatLong = LatLng(
-          double.parse(rideData!.latitudeDepart.toString()),
-          double.parse(rideData!.longitudeDepart.toString()));
-      destinationLatLong = LatLng(
-          double.parse(rideData!.latitudeArrivee.toString()),
-          double.parse(rideData!.longitudeArrivee.toString()));
+      departureLatLong = LatLng(double.parse("0.0"), double.parse("0.0"));
+      destinationLatLong = LatLng(double.parse("0.0"), double.parse("0.0"));
 
       if (rideData!.statut == "on ride" || rideData!.statut == 'confirmed') {
         Constant.driverLocationUpdateCollection
@@ -86,9 +82,9 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
           dynamic response = await dio.get(
               "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${rideData!.latitudeDepart},${rideData!.longitudeDepart}&destinations=${double.parse(driverLocationUpdate.driverLatitude.toString())},${double.parse(driverLocationUpdate.driverLongitude.toString())}&key=${Constant.kGoogleApiKey}");
 
-          driverEstimateArrivalTime = response.data['rows'][0]['elements'][0]
-                  ['duration']['text']
-              .toString();
+          driverEstimateArrivalTime =
+              response.data['rows'][0]['elements'][0]['duration']?['text'];
+          "".toString();
 
           setState(() {
             departureLatLong = LatLng(
@@ -221,7 +217,7 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
                                     ),
                                   ),
                                   Text(
-                                    driverEstimateArrivalTime,
+                                    driverEstimateArrivalTime ?? "",
                                     style: TextStyle(
                                         color: ConstantColors.yellow,
                                         fontSize: 16),
@@ -555,7 +551,7 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
                                                 const EdgeInsets.only(left: 10),
                                             child: ButtonThem.buildButton(
                                               context,
-                                              title: 'sos'.tr,
+                                              title: 'SOS'.tr,
                                               btnHeight: 35,
                                               btnWidthRatio: 0.16,
                                               btnColor: ConstantColors.primary,
@@ -961,8 +957,7 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
     if (rideData!.statut == "confirmed") {
       result = await polylinePoints.getRouteBetweenCoordinates(
         Constant.kGoogleApiKey.toString(),
-        PointLatLng(double.parse(rideData!.latitudeDepart.toString()),
-            double.parse(rideData!.longitudeDepart.toString())),
+        PointLatLng(double.parse("0.0"), double.parse("0.0")),
         PointLatLng(dLat, dLng),
         wayPoints: wayPointList,
         optimizeWaypoints: true,
@@ -991,8 +986,7 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
     _markers['Departure'] = Marker(
       markerId: const MarkerId('Departure'),
       infoWindow: const InfoWindow(title: "Departure"),
-      position: LatLng(double.parse(rideData!.latitudeDepart.toString()),
-          double.parse(rideData!.longitudeDepart.toString())),
+      position: LatLng(double.parse("0.0"), double.parse("0.0")),
       icon: departureIcon!,
     );
 
@@ -1032,8 +1026,8 @@ class _RouteViewScreenState extends State<RouteViewScreen> {
       geodesic: true,
     );
     polyLines[id] = polyline;
-    updateCameraLocation(
-        polylineCoordinates.first, polylineCoordinates.last, _controller);
+    updateCameraLocation(polylineCoordinates.first ,
+        polylineCoordinates.last , _controller);
 
     setState(() {});
   }
