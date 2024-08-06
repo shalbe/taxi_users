@@ -4,6 +4,7 @@ import 'package:cabme/controller/new_ride_controller.dart';
 import 'package:cabme/model/ride_model.dart';
 import 'package:cabme/page/complaint/add_complaint_screen.dart';
 import 'package:cabme/page/completed_ride_screens/trip_history_screen.dart';
+import 'package:cabme/page/home_screens/home_screen.dart';
 import 'package:cabme/page/review_screens/add_review_screen.dart';
 import 'package:cabme/page/route_view_screen/route_view_screen.dart';
 import 'package:cabme/themes/button_them.dart';
@@ -38,13 +39,44 @@ class NewRideScreen extends StatelessWidget {
                             "You have not booked any trip.\n Please book a cab now"
                                 .tr,
                             true)
-                        : ListView.builder(
-                            itemCount: controller.rideList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return newRideWidgets(controller, context,
-                                  controller.rideList[index]);
-                            }),
+                        : SingleChildScrollView(
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.only(top: 50, left: 12, right: 12),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'All Bookings',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomeScreen()));
+                                          },
+                                          child: Icon(Icons.arrow_forward)),
+                                    ],
+                                  ),
+                                  ListView.builder(
+                                      itemCount: controller.rideList.length,
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        return newRideWidgets(
+                                            controller,
+                                            context,
+                                            controller.rideList[index]);
+                                      }),
+                                ],
+                              ),
+                            ),
+                          ),
               ),
             ));
       },
