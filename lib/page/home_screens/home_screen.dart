@@ -1,10 +1,12 @@
 import 'dart:developer';
 
+import 'package:cabme/constant/const.dart';
 import 'package:cabme/constant/constant.dart';
 import 'package:cabme/constant/show_toast_dialog.dart';
 import 'package:cabme/controller/home_controller.dart';
 import 'package:cabme/model/driver_model.dart';
 import 'package:cabme/model/sub_category_model.dart';
+import 'package:cabme/model/user_model.dart';
 import 'package:cabme/model/vehicle_category_model.dart';
 import 'package:cabme/page/home_screens/payment_screen.dart';
 import 'package:cabme/themes/button_them.dart';
@@ -28,6 +30,8 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
+int? payMentType;
 
 class _HomeScreenState extends State<HomeScreen> {
   final controller = Get.put(HomeController());
@@ -89,11 +93,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  User? users;
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-
+    // var user = Preferences.getString(Preferences.user);
+    // log('===============${user}');
     return Scaffold(
       backgroundColor: ConstantColors.background,
       body: Stack(
@@ -465,6 +471,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 () {
                                   controller.disposeSelections();
                                   controller.disposeSubCategories();
+                                  // setState(() {
+                                  //   payMentType = controller
+                                  //       .categories[index].paymentType;
+                                  //   print(
+                                  //       '=====================$payMentType');
+                                  // });
                                 },
                               );
                             },
@@ -1270,7 +1282,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                                 child: buildDetails(
-                                    title: controller.paymentMethodType.value,
+                                    title: controller.paymentType == 1
+                                        ? 'Paymob'
+                                        : controller.paymentMethodType.value,
                                     value: 'Payment'.tr),
                               ),
                             ),
@@ -1387,6 +1401,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 txtColor: Colors.white, onPress: () {
                               controller.driverSelected.value = driverModel;
                               if (controller.paymentMethodType.value ==
+                                      'paymob' ||
+                                  controller.paymentType == 1) {
+                                controller.PaymentWithCard(
+                                    email: controller.userModel!.data!.email.toString(),
+                                    firstname: controller.userModel!.data!.prenom.toString(),
+                                    lastName: controller.userModel!.data!.nom.toString(),
+                                    phone: controller.userModel!.data!.phone.toString(),
+                                    price: controller.tripPrice.value,
+                                    integrationmethod: integrationIDCard);
+                              } else if (controller.paymentMethodType.value ==
                                   "Select Method") {
                                 ShowToastDialog.showToast(
                                     "Please select payment method".tr);
@@ -1752,6 +1776,82 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               //toggleable: true,
                             ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 1, horizontal: 1),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: controller.paymob.value ? 0 : 2,
+                          child: RadioListTile(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: BorderSide(
+                                    color: controller.paymob.value
+                                        ? ConstantColors.primary
+                                        : Colors.transparent)),
+                            controlAffinity: ListTileControlAffinity.trailing,
+                            value: "paymob",
+                            groupValue: controller.paymentMethodType.value,
+                            onChanged: (String? value) {
+                              controller.paymob = true.obs;
+                              controller.stripe = false.obs;
+                              controller.razorPay = false.obs;
+                              controller.payTm = false.obs;
+                              controller.paypal = false.obs;
+                              controller.payStack = false.obs;
+                              controller.flutterWave = false.obs;
+                              controller.mercadoPago = false.obs;
+                              controller.payFast = false.obs;
+                              controller.paymentMethodType.value = value!;
+                              // controller.paymentMethodId = controller
+                              //     .paymentSettingModel
+                              //     .value
+                              //     .payMob!
+                              //     .idPaymentMethod
+                              //     .toString()
+                              //     .obs;
+                              Get.back();
+                            },
+                            selected: controller.paymob.value,
+                            //selectedRadioTile == "strip" ? true : false,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                            ),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey.shade50,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 10),
+                                      child: SizedBox(
+                                        width: 80,
+                                        height: 35,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6.0),
+                                          child: Image.asset(
+                                            "assets/images/PayMob_Payments.png",
+                                          ),
+                                        ),
+                                      ),
+                                    )),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Text("payMob".tr),
+                              ],
+                            ),
+                            //toggleable: true,
                           ),
                         ),
                       ),

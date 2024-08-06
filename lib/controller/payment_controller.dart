@@ -24,6 +24,7 @@ class PaymentController extends GetxController {
   TextEditingController tripAmountTextFieldController = TextEditingController();
 
   RxBool cash = false.obs;
+  RxBool paymob = false.obs;
   RxBool wallet = false.obs;
   RxBool stripe = false.obs;
   RxBool razorPay = false.obs;

@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cabme/constant/const.dart';
 import 'package:cabme/constant/constant.dart';
 import 'package:cabme/constant/show_toast_dialog.dart';
 import 'package:cabme/controller/parcel_payment_controller.dart';
@@ -277,6 +278,7 @@ class ParcelPaymentSelectionScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
+                               
                               ],
                             ),
                             Padding(
@@ -886,6 +888,83 @@ class ParcelPaymentSelectionScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                 Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 3.0, horizontal: 20),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation:
+                                  controller.paymob.value ? 0 : 2,
+                              child: RadioListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: BorderSide(
+                                        color: controller.paymob.value
+                                            ? ConstantColors.primary
+                                            : Colors.transparent)),
+                                controlAffinity:
+                                    ListTileControlAffinity.trailing,
+                                value: "paymob",
+                                groupValue: controller
+                                    .selectedRadioTile.value,
+                                onChanged: (String? value) {
+                                  controller.paymob = true.obs;
+                                  controller.stripe = false.obs;
+                                  controller.razorPay = false.obs;
+                                  controller.payTm = false.obs;
+                                  controller.paypal = false.obs;
+                                  controller.payStack = false.obs;
+                                  controller.flutterWave = false.obs;
+                                  controller.mercadoPago = false.obs;
+                                  controller.payFast = false.obs;
+                                  controller
+                                      .selectedRadioTile!.value = value!;
+                                },
+                                selected: controller.paymob.value,
+                                //selectedRadioTile == "strip" ? true : false,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueGrey.shade50,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 4.0,
+                                                  horizontal: 10),
+                                          child: SizedBox(
+                                            width: 80,
+                                            height: 35,
+                                            child: Padding(
+                                              padding: const EdgeInsets
+                                                  .symmetric(vertical: 6.0),
+                                              child: Image.asset(
+                                                "assets/images/PayMob_Payments.png",
+                                              ),
+                                            ),
+                                          ),
+                                        )),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text("payMob".tr),
+                                  ],
+                                ),
+                                //toggleable: true,
+                              ),
+                            ),
+                          ),
+               
                   Visibility(
                     visible:
                         controller.paymentSettingModel.value.strip!.isEnabled ==
@@ -1665,6 +1744,15 @@ class ParcelPaymentSelectionScreen extends StatelessWidget {
                         showLoadingAlert(context);
                         flutterWaveInitiatePayment(
                             context, controller.getTotalAmount().toString());
+                      } else if (controller.selectedRadioTile.value ==
+                            "paymob") {
+                                   controller.PaymentWithCard(
+                                  email: controller.userModel!.data!.email.toString(),
+                                    firstname: controller.userModel!.data!.prenom.toString(),
+                                    lastName: controller.userModel!.data!.nom.toString(),
+                                    phone: controller.userModel!.data!.phone.toString(),
+                                    price: int.parse(controller.getTotalAmount().toString()),
+                                    integrationmethod: integrationIDCard);
                       } else if (controller.selectedRadioTile.value ==
                           "MercadoPago") {
                         showLoadingAlert(context);

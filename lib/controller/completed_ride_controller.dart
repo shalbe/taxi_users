@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cabme/constant/constant.dart';
@@ -26,6 +27,7 @@ class CompletedRideController extends GetxController {
 
   getUsrData() {
     userModel = Constant.getUserData();
+    log('##############${userModel!.data!.accesstoken}');
   }
 
   Future<dynamic> getCompletedRide() async {

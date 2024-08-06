@@ -11,6 +11,7 @@ import 'package:cabme/firebase_options.dart';
 import 'package:cabme/model/ride_model.dart';
 import 'package:cabme/page/localization_screens/localization_screen.dart';
 import 'package:cabme/page/route_view_screen/route_view_screen.dart';
+import 'package:cabme/share/dio_helper.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -39,7 +40,7 @@ void main() async {
   Stripe.publishableKey = Constant.stripePublishablekey;
   WidgetsFlutterBinding.ensureInitialized();
   await Preferences.initPref();
-
+  await DioHelper.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -73,6 +74,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  static GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
   Future<void> setupInteractedMessage(BuildContext context) async {
     initialize(context);
@@ -182,6 +184,7 @@ class MyApp extends StatelessWidget {
     });
     return GetMaterialApp(
       title: 'Taxi Madina',
+      navigatorKey: navKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: ConstantColors.primary,

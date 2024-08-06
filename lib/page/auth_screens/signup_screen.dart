@@ -32,7 +32,7 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _phoneController = TextEditingController(text: phoneNumber);
+    // _phoneController = TextEditingController(text: phoneNumber);
     return Scaffold(
       backgroundColor: ConstantColors.background,
       body: SafeArea(
@@ -118,7 +118,7 @@ class SignupScreen extends StatelessWidget {
                               controller: _phoneController,
                               textInputType: TextInputType.number,
                               maxLength: 13,
-                              enabled: false,
+                              // enabled: false,
                               contentPadding: EdgeInsets.zero,
                               validators: (String? value) {
                                 if (value!.isNotEmpty) {

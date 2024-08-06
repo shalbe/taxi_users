@@ -5,6 +5,7 @@ import 'package:cabme/controller/login_conroller.dart';
 import 'package:cabme/page/auth_screens/add_profile_photo_screen.dart';
 import 'package:cabme/page/auth_screens/forgot_password.dart';
 import 'package:cabme/page/auth_screens/mobile_number_screen.dart';
+import 'package:cabme/page/auth_screens/signup_screen.dart';
 import 'package:cabme/page/dash_board.dart';
 import 'package:cabme/themes/button_them.dart';
 import 'package:cabme/themes/constant_colors.dart';
@@ -233,8 +234,8 @@ class LoginScreen extends StatelessWidget {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           Get.to(
-                              MobileNumberScreen(
-                                isLogin: false,
+                              SignupScreen(
+                                phoneNumber: '',
                               ),
                               duration: const Duration(
                                   milliseconds:

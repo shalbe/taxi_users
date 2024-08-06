@@ -3,9 +3,11 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cabme/constant/const.dart';
 import 'package:cabme/constant/constant.dart';
 import 'package:cabme/constant/show_toast_dialog.dart';
 import 'package:cabme/controller/wallet_controller.dart';
+import 'package:cabme/main.dart';
 import 'package:cabme/model/get_payment_txt_token_model.dart';
 import 'package:cabme/model/payStackURLModel.dart';
 import 'package:cabme/model/razorpay_gen_orderid_model.dart';
@@ -37,6 +39,8 @@ import '../../utils/Preferences.dart';
 import 'MercadoPagoScreen.dart';
 import 'PayFastScreen.dart';
 import 'paystack_url_genrater.dart';
+
+BuildContext context = MyApp.navKey.currentState!.context;
 
 class WalletScreen extends StatelessWidget {
   WalletScreen({Key? key}) : super(key: key);
@@ -669,6 +673,40 @@ class WalletScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+                          //  InkWell(
+                          //                                 onTap: () {
+                          //                                   // PaymentCubit.get(
+                          //                                   //         context)
+                          //                                   //     .getApiKeyCard(
+                          //                                   //   email: userDetails[
+                          //                                   //           'email'] ??
+                          //                                   //       "",
+                          //                                   //   firstname:
+                          //                                   //       userDetails[
+                          //                                   //               'name'] ??
+                          //                                   //           "",
+                          //                                   //   lastName: userDetails[
+                          //                                   //           'name'] ??
+                          //                                   //       "",
+                          //                                   //   phone: userDetails[
+                          //                                   //           'mobile'] ??
+                          //                                   //       "",
+                          //                                   //   price: '100',
+                          //                                   //   integrationmethod:
+                          //                                   //       integrationIDCard,
+                          //                                   // );
+
+                          //                                controller.PaymentWithCard(
+                          //                                 email: 'amram@amram',
+                          //                                 firstname: 'amr',
+                          //                                 lastName: 'shalpy',
+                          //                                 phone: '1299920',
+                          //                                 price: 100,
+                          //                                 integrationmethod: integrationIDCard
+                          //                                );
+                          //                                 },
+                          //                               ),
+
                           Row(
                             children: [
                               Padding(
@@ -769,6 +807,84 @@ class WalletScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 3.0, horizontal: 20),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation:
+                                  walletController.paymob.value ? 0 : 2,
+                              child: RadioListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: BorderSide(
+                                        color: walletController.stripe.value
+                                            ? ConstantColors.primary
+                                            : Colors.transparent)),
+                                controlAffinity:
+                                    ListTileControlAffinity.trailing,
+                                value: "paymob",
+                                groupValue: walletController
+                                    .selectedRadioTile!.value,
+                                onChanged: (String? value) {
+                                  walletController.paymob = true.obs;
+                                  walletController.stripe = false.obs;
+                                  walletController.razorPay = false.obs;
+                                  walletController.payTm = false.obs;
+                                  walletController.paypal = false.obs;
+                                  walletController.payStack = false.obs;
+                                  walletController.flutterWave = false.obs;
+                                  walletController.mercadoPago = false.obs;
+                                  walletController.payFast = false.obs;
+                                  walletController
+                                      .selectedRadioTile!.value = value!;
+                                },
+                                selected: walletController.paymob.value,
+                                //selectedRadioTile == "strip" ? true : false,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueGrey.shade50,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 4.0,
+                                                  horizontal: 10),
+                                          child: SizedBox(
+                                            width: 80,
+                                            height: 35,
+                                            child: Padding(
+                                              padding: const EdgeInsets
+                                                  .symmetric(vertical: 6.0),
+                                              child: Image.asset(
+                                                "assets/images/PayMob_Payments.png",
+                                              ),
+                                            ),
+                                          ),
+                                        )),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text("payMob".tr),
+                                  ],
+                                ),
+                                //toggleable: true,
+                              ),
+                            ),
+                          ),
+
                           Visibility(
                             visible: walletController.paymentSettingModel.value
                                         .payStack!.isEnabled ==
@@ -1159,86 +1275,87 @@ class WalletScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Visibility(
-                            visible: walletController.paymentSettingModel.value
-                                        .mercadopago!.isEnabled ==
-                                    "true"
-                                ? true
-                                : false,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 20),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                elevation:
-                                    walletController.mercadoPago.value ? 0 : 2,
-                                child: RadioListTile(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      side: BorderSide(
-                                          color:
-                                              walletController.mercadoPago.value
-                                                  ? ConstantColors.primary
-                                                  : Colors.transparent)),
-                                  controlAffinity:
-                                      ListTileControlAffinity.trailing,
-                                  value: "MercadoPago",
-                                  groupValue:
-                                      walletController.selectedRadioTile!.value,
-                                  onChanged: (String? value) {
-                                    walletController.stripe = false.obs;
-                                    walletController.razorPay = false.obs;
-                                    walletController.payTm = false.obs;
-                                    walletController.paypal = false.obs;
-                                    walletController.payStack = false.obs;
-                                    walletController.flutterWave = false.obs;
-                                    walletController.mercadoPago = true.obs;
-                                    walletController.payFast = false.obs;
-                                    walletController.selectedRadioTile!.value =
-                                        value!;
-                                  },
-                                  selected: walletController.mercadoPago.value,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                  ),
-                                  title: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.blueGrey.shade50,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 4.0, horizontal: 10),
-                                            child: SizedBox(
-                                              width: 80,
-                                              height: 35,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 6.0),
-                                                child: Image.asset(
-                                                  "assets/images/mercadopago.png",
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                      const SizedBox(
-                                        width: 20,
-                                      ),
-                                      const Text("Mercado Pago"),
-                                    ],
-                                  ),
-                                  //toggleable: true,
-                                ),
-                              ),
-                            ),
-                          ),
+                          // Visibility(
+                          //   visible: walletController.paymentSettingModel.value
+                          //               .mercadopago!.isEnabled ==
+                          //           "true"
+                          //       ? true
+                          //       : false,
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.symmetric(
+                          //         vertical: 4.0, horizontal: 20),
+                          //     child: Card(
+                          //       shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(8),
+                          //       ),
+                          //       elevation:
+                          //           walletController.mercadoPago.value ? 0 : 2,
+                          //       child: RadioListTile(
+                          //         shape: RoundedRectangleBorder(
+                          //             borderRadius: BorderRadius.circular(8),
+                          //             side: BorderSide(
+                          //                 color:
+                          //                     walletController.mercadoPago.value
+                          //                         ? ConstantColors.primary
+                          //                         : Colors.transparent)),
+                          //         controlAffinity:
+                          //             ListTileControlAffinity.trailing,
+                          //         value: "MercadoPago",
+                          //         groupValue:
+                          //             walletController.selectedRadioTile!.value,
+                          //         onChanged: (String? value) {
+                          //           walletController.stripe = false.obs;
+                          //           walletController.razorPay = false.obs;
+                          //           walletController.payTm = false.obs;
+                          //           walletController.paypal = false.obs;
+                          //           walletController.payStack = false.obs;
+                          //           walletController.flutterWave = false.obs;
+                          //           walletController.mercadoPago = true.obs;
+                          //           walletController.payFast = false.obs;
+                          //           walletController.selectedRadioTile!.value =
+                          //               value!;
+                          //         },
+                          //         selected: walletController.mercadoPago.value,
+                          //         contentPadding: const EdgeInsets.symmetric(
+                          //           horizontal: 6,
+                          //         ),
+                          //         title: Row(
+                          //           mainAxisAlignment: MainAxisAlignment.start,
+                          //           children: [
+                          //             Container(
+                          //                 decoration: BoxDecoration(
+                          //                   color: Colors.blueGrey.shade50,
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(8),
+                          //                 ),
+                          //                 child: Padding(
+                          //                   padding: const EdgeInsets.symmetric(
+                          //                       vertical: 4.0, horizontal: 10),
+                          //                   child: SizedBox(
+                          //                     width: 80,
+                          //                     height: 35,
+                          //                     child: Padding(
+                          //                       padding:
+                          //                           const EdgeInsets.symmetric(
+                          //                               vertical: 6.0),
+                          //                       child: Image.asset(
+                          //                         "assets/images/mercadopago.png",
+                          //                       ),
+                          //                     ),
+                          //                   ),
+                          //                 )),
+                          //             const SizedBox(
+                          //               width: 20,
+                          //             ),
+                          //             const Text("Mercado Pago"),
+                          //           ],
+                          //         ),
+                          //         //toggleable: true,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+
                           Visibility(
                             visible: walletController.paymentSettingModel.value
                                         .payPal!.isEnabled ==
@@ -1442,6 +1559,16 @@ class WalletScreen extends StatelessWidget {
                                           .selectedRadioTile!.value ==
                                       "MercadoPago") {
                                     mercadoPagoMakePayment(context);
+                                  } else if (walletController
+                                          .selectedRadioTile!.value ==
+                                      "paymob") {
+                                   controller.PaymentWithCard(
+                                 email: controller.userModel!.data!.email.toString(),
+                                    firstname: controller.userModel!.data!.prenom.toString(),
+                                    lastName: controller.userModel!.data!.nom.toString(),
+                                    phone: controller.userModel!.data!.phone.toString(),
+                                    price: int.parse(amountController.text.toString()),
+                                    integrationmethod: integrationIDCard);
                                   } else {
                                     Get.back();
                                     ShowToastDialog.showToast(

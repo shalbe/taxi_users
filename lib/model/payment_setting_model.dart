@@ -12,6 +12,7 @@ class PaymentSettingModel {
   Mercadopago? mercadopago;
   Paytm? paytm;
   PayPal? payPal;
+  PayMob? payMob;
 
   PaymentSettingModel({
     this.success,
@@ -35,12 +36,23 @@ class PaymentSettingModel {
     message = json['message'];
     strip = json['Strip'] != null ? Strip.fromJson(json['Strip']) : null;
     cash = json['Cash'] != null ? Cash.fromJson(json['Cash']) : null;
-    payFast = json['PayFast'] != null ? PayFast.fromJson(json['PayFast']) : null;
-    myWallet = json['My Wallet'] != null ? Cash.fromJson(json['My Wallet']) : null;
-    payStack = json['PayStack'] != null ? PayStack.fromJson(json['PayStack']) : null;
-    flutterWave = json['FlutterWave'] != null ? FlutterWave.fromJson(json['FlutterWave']) : null;
-    razorpay = json['Razorpay'] != null ? RazorpayModel.fromJson(json['Razorpay']) : null;
-    mercadopago = json['Mercadopago'] != null ? Mercadopago.fromJson(json['Mercadopago']) : null;
+    payFast =
+        json['PayFast'] != null ? PayFast.fromJson(json['PayFast']) : null;
+    myWallet =
+        json['My Wallet'] != null ? Cash.fromJson(json['My Wallet']) : null;
+    payStack =
+        json['PayStack'] != null ? PayStack.fromJson(json['PayStack']) : null;
+    payMob =
+        json['payMob'] != null ? PayMob.fromJson(json['payMob']) : null;
+    flutterWave = json['FlutterWave'] != null
+        ? FlutterWave.fromJson(json['FlutterWave'])
+        : null;
+    razorpay = json['Razorpay'] != null
+        ? RazorpayModel.fromJson(json['Razorpay'])
+        : null;
+    mercadopago = json['Mercadopago'] != null
+        ? Mercadopago.fromJson(json['Mercadopago'])
+        : null;
     paytm = json['Paytm'] != null ? Paytm.fromJson(json['Paytm']) : null;
     payPal = json['PayPal'] != null ? PayPal.fromJson(json['PayPal']) : null;
   }
@@ -95,7 +107,15 @@ class Strip {
   String? idPaymentMethod;
   String? libelle;
 
-  Strip({this.id, this.key, this.clientpublishableKey, this.secretKey, this.isEnabled, this.isSandboxEnabled, this.idPaymentMethod, this.libelle});
+  Strip(
+      {this.id,
+      this.key,
+      this.clientpublishableKey,
+      this.secretKey,
+      this.isEnabled,
+      this.isSandboxEnabled,
+      this.idPaymentMethod,
+      this.libelle});
 
   Strip.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();
@@ -159,7 +179,17 @@ class PayFast {
   String? idPaymentMethod;
   String? libelle;
 
-  PayFast({this.id, this.merchantId, this.merchantKey, this.cancelUrl, this.notifyUrl, this.returnUrl, this.isEnabled, this.isSandboxEnabled, this.idPaymentMethod, this.libelle});
+  PayFast(
+      {this.id,
+      this.merchantId,
+      this.merchantKey,
+      this.cancelUrl,
+      this.notifyUrl,
+      this.returnUrl,
+      this.isEnabled,
+      this.isSandboxEnabled,
+      this.idPaymentMethod,
+      this.libelle});
 
   PayFast.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();
@@ -200,7 +230,15 @@ class PayStack {
   String? idPaymentMethod;
   String? libelle;
 
-  PayStack({this.id, this.secretKey, this.publicKey, this.callbackUrl, this.isEnabled, this.isSandboxEnabled, this.idPaymentMethod, this.libelle});
+  PayStack(
+      {this.id,
+      this.secretKey,
+      this.publicKey,
+      this.callbackUrl,
+      this.isEnabled,
+      this.isSandboxEnabled,
+      this.idPaymentMethod,
+      this.libelle});
 
   PayStack.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();
@@ -237,7 +275,15 @@ class FlutterWave {
   String? idPaymentMethod;
   String? libelle;
 
-  FlutterWave({this.id, this.secretKey, this.publicKey, this.encryptionKey, this.isEnabled, this.isSandboxEnabled, this.idPaymentMethod, this.libelle});
+  FlutterWave(
+      {this.id,
+      this.secretKey,
+      this.publicKey,
+      this.encryptionKey,
+      this.isEnabled,
+      this.isSandboxEnabled,
+      this.idPaymentMethod,
+      this.libelle});
 
   FlutterWave.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();
@@ -273,7 +319,14 @@ class RazorpayModel {
   String? idPaymentMethod;
   String? libelle;
 
-  RazorpayModel({this.id, this.key, this.secretKey, this.isEnabled, this.isSandboxEnabled, this.idPaymentMethod, this.libelle});
+  RazorpayModel(
+      {this.id,
+      this.key,
+      this.secretKey,
+      this.isEnabled,
+      this.isSandboxEnabled,
+      this.idPaymentMethod,
+      this.libelle});
 
   RazorpayModel.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();
@@ -306,7 +359,13 @@ class Mercadopago {
   String? isSandboxEnabled;
   String? idPaymentMethod;
 
-  Mercadopago({this.id, this.publicKey, this.accesstoken, this.isEnabled, this.isSandboxEnabled, this.idPaymentMethod});
+  Mercadopago(
+      {this.id,
+      this.publicKey,
+      this.accesstoken,
+      this.isEnabled,
+      this.isSandboxEnabled,
+      this.idPaymentMethod});
 
   Mercadopago.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();
@@ -338,7 +397,14 @@ class Paytm {
   String? idPaymentMethod;
   String? libelle;
 
-  Paytm({this.id, this.merchantId, this.merchantKey, this.isEnabled, this.isSandboxEnabled, this.idPaymentMethod, this.libelle});
+  Paytm(
+      {this.id,
+      this.merchantId,
+      this.merchantKey,
+      this.isEnabled,
+      this.isSandboxEnabled,
+      this.idPaymentMethod,
+      this.libelle});
 
   Paytm.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();
@@ -394,6 +460,71 @@ class PayPal {
       this.libelle});
 
   PayPal.fromJson(Map<String, dynamic> json) {
+    id = json['id'].toString();
+    appId = json['app_id'].toString();
+    secretKey = json['secret_key'].toString();
+    merchantId = json['merchant_Id'].toString();
+    privateKey = json['private_key'].toString();
+    publicKey = json['public_key'].toString();
+    tokenizationKey = json['tokenization_key'].toString();
+    isEnabled = json['isEnabled'].toString();
+    isLive = json['isLive'].toString();
+    idPaymentMethod = json['id_payment_method'].toString();
+    username = json['username'].toString();
+    password = json['password'].toString();
+    libelle = json['libelle'].toString();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['app_id'] = appId;
+    data['secret_key'] = secretKey;
+    data['merchant_Id'] = merchantId;
+    data['private_key'] = privateKey;
+    data['public_key'] = publicKey;
+    data['tokenization_key'] = tokenizationKey;
+    data['isEnabled'] = isEnabled;
+    data['isLive'] = isLive;
+    data['id_payment_method'] = idPaymentMethod;
+    data['username'] = username;
+    data['password'] = password;
+    data['libelle'] = libelle;
+    return data;
+  }
+}
+
+class PayMob {
+  String? id;
+  String? appId;
+  String? secretKey;
+  String? merchantId;
+  String? privateKey;
+  String? publicKey;
+  String? tokenizationKey;
+  String? isEnabled;
+  String? isLive;
+  String? idPaymentMethod;
+  String? username;
+  String? password;
+  String? libelle;
+
+  PayMob(
+      {this.id,
+      this.appId,
+      this.secretKey,
+      this.merchantId,
+      this.privateKey,
+      this.publicKey,
+      this.tokenizationKey,
+      this.isEnabled,
+      this.isLive,
+      this.idPaymentMethod,
+      this.username,
+      this.password,
+      this.libelle});
+
+  PayMob.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();
     appId = json['app_id'].toString();
     secretKey = json['secret_key'].toString();

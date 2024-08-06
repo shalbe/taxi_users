@@ -903,6 +903,85 @@ class PaymentSelectionScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                 
+                  Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 3.0, horizontal: 20),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation:
+                                  controller.paymob.value ? 0 : 2,
+                              child: RadioListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: BorderSide(
+                                        color: controller.paymob.value
+                                            ? ConstantColors.primary
+                                            : Colors.transparent)),
+                                controlAffinity:
+                                    ListTileControlAffinity.trailing,
+                                value: "paymob",
+                                groupValue: controller
+                                    .selectedRadioTile.value,
+                                onChanged: (String? value) {
+                                  controller.paymob = true.obs;
+                                  controller.stripe = false.obs;
+                                  controller.razorPay = false.obs;
+                                  controller.payTm = false.obs;
+                                  controller.paypal = false.obs;
+                                  controller.payStack = false.obs;
+                                  controller.flutterWave = false.obs;
+                                  controller.mercadoPago = false.obs;
+                                  controller.payFast = false.obs;
+                                  controller
+                                      .selectedRadioTile!.value = value!;
+                                },
+                                selected: controller.paymob.value,
+                                //selectedRadioTile == "strip" ? true : false,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueGrey.shade50,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 4.0,
+                                                  horizontal: 10),
+                                          child: SizedBox(
+                                            width: 80,
+                                            height: 35,
+                                            child: Padding(
+                                              padding: const EdgeInsets
+                                                  .symmetric(vertical: 6.0),
+                                              child: Image.asset(
+                                                "assets/images/PayMob_Payments.png",
+                                              ),
+                                            ),
+                                          ),
+                                        )),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text("payMob".tr),
+                                  ],
+                                ),
+                                //toggleable: true,
+                              ),
+                            ),
+                          ),
+               
+                
                   Visibility(
                     visible:
                         controller.paymentSettingModel.value.strip!.isEnabled ==
@@ -985,6 +1064,7 @@ class PaymentSelectionScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+           
                   Visibility(
                     visible: controller.paymentSettingModel.value.payStack!
                                 .isEnabled ==
