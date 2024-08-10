@@ -1118,7 +1118,7 @@ class HomeController extends GetxController {
                     }
                   }
                 },
-                onHttpError: (HttpResponseError error) {},
+              //  onHttpError: (HttpResponseError error) {},
                 onWebResourceError: (WebResourceError error) {},
                 onNavigationRequest: (NavigationRequest request) {
                   return NavigationDecision.navigate;
