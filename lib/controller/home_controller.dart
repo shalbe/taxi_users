@@ -20,6 +20,8 @@ import 'package:cabme/model/payment_method_model.dart';
 import 'package:cabme/model/sub_category_model.dart';
 import 'package:cabme/model/user_model.dart';
 import 'package:cabme/model/vehicle_category_model.dart';
+import 'package:cabme/page/new_ride_screens/new_ride_screen.dart';
+import 'package:cabme/page/on_ride_screens/on_ride_screen.dart';
 import 'package:cabme/page/parcel_service_screen/visascreen.dart';
 import 'package:cabme/page/wallet/wallet_screen.dart';
 import 'package:cabme/service/api.dart';
@@ -1112,6 +1114,10 @@ class HomeController extends GetxController {
                         descriptions: "Your booking has been sent successfully",
                         onPress: () {
                           Get.back();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NewRideScreen()));
                         },
                         img: Image.asset('assets/images/green_checked.png'),
                       ));

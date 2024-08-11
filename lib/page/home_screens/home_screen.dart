@@ -9,6 +9,8 @@ import 'package:cabme/model/sub_category_model.dart';
 import 'package:cabme/model/user_model.dart';
 import 'package:cabme/model/vehicle_category_model.dart';
 import 'package:cabme/page/home_screens/payment_screen.dart';
+import 'package:cabme/page/new_ride_screens/new_ride_screen.dart';
+import 'package:cabme/page/on_ride_screens/on_ride_screen.dart';
 import 'package:cabme/themes/button_them.dart';
 import 'package:cabme/themes/constant_colors.dart';
 import 'package:cabme/themes/custom_dialog_box.dart';
@@ -487,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8.0),
                                   child: SizedBox(
-                                    width: 40,
+                                    width: 80,
                                     child: CachedNetworkImage(
                                         fadeInDuration:
                                             const Duration(milliseconds: 50),
@@ -1404,10 +1406,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       'paymob' ||
                                   controller.paymentType == 1) {
                                 controller.PaymentWithCard(
-                                    email: controller.userModel!.data!.email.toString(),
-                                    firstname: controller.userModel!.data!.prenom.toString(),
-                                    lastName: controller.userModel!.data!.nom.toString(),
-                                    phone: controller.userModel!.data!.phone.toString(),
+                                    email: controller.userModel!.data!.email
+                                        .toString(),
+                                    firstname: controller
+                                        .userModel!.data!.prenom
+                                        .toString(),
+                                    lastName: controller.userModel!.data!.nom
+                                        .toString(),
+                                    phone: controller.userModel!.data!.phone
+                                        .toString(),
                                     price: controller.tripPrice.value,
                                     integrationmethod: integrationIDCard);
                               } else if (controller.paymentMethodType.value ==
@@ -1461,7 +1468,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     "Your booking has been sent successfully"
                                                         .tr,
                                                 onPress: () {
-                                                  Get.back();
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              NewRideScreen()));
                                                 },
                                                 img: Image.asset(
                                                     'assets/images/green_checked.png'),
